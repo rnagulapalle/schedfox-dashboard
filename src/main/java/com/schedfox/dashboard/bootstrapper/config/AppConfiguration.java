@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
  * Time: 12:34 PM
  */
 @Configuration
-@Import(MetricsConfiguration.class)
+@Import({MetricsConfiguration.class, DBConfiguration.class})
 public class AppConfiguration {
 }
 
