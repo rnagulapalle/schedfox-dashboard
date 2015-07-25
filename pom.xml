@@ -137,16 +137,14 @@
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901-1.jdbc4</version>
-		</dependency> -->
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>9.1-901.jdbc3</version>
+			<version>9.1-901.jdbc4</version>
 		</dependency>
+
+		<!-- <dependency> <groupId>postgresql</groupId> <artifactId>postgresql</artifactId> 
+			<version>9.1-901.jdbc3</version> </dependency> -->
 
 		<!-- Servlet -->
 		<dependency>
@@ -296,11 +294,8 @@
 			<artifactId>hibernate-c3p0</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.connector.version}</version>
-		</dependency>
+		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
+			<version>${mysql.connector.version}</version> </dependency> -->
 	</dependencies>
 
 	<repositories>
