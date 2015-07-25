@@ -4,10 +4,12 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.hibernate.SessionFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -26,15 +28,15 @@ import junit.framework.TestCase;
 public class AppTest extends TestCase {
 
 	private static final Logger logger = LoggerFactory.getLogger(AppTest.class);
-//	@Autowired
-//    private SessionFactory sessionFactory;
+	@Autowired
+    private SessionFactory sessionFactory;
 	
-	private EntityManagerFactory emf;
-
-	@PersistenceContext
-    public void setEntityManagerFactory(EntityManagerFactory emf) {
-        this.emf = emf;
-    }
+//	private EntityManagerFactory emf;
+//
+//	@PersistenceContext
+//    public void setEntityManagerFactory(EntityManagerFactory emf) {
+//        this.emf = emf;
+//    }
 	
 	@Test
 	public void testConnection() {
@@ -44,6 +46,6 @@ public class AppTest extends TestCase {
 //		Session session = sessionFactory.openSession();
 //		session.beginTransaction();
 //		System.out.println("this is test");
-		System.out.println(this.emf.createEntityManager());
+		System.out.println(this.sessionFactory.getCurrentSession());
 	}
 }
