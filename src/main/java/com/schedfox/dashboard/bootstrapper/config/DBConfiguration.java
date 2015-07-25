@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.postgresql.ds.PGPoolingDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -60,6 +61,15 @@ public class DBConfiguration {
 	@Bean(name = "dataSource")
 	public PGPoolingDataSource dataSource() {
 		try {
+//			BasicDataSource source = new BasicDataSource();
+//			source.setDriverClassName("org.postgresql.Driver");
+//			source.setUrl("jdbc:postgresql://schedfoxdb.schedfox.com/unique_manage");
+//			source.setUsername("dbuser");
+//			source.setPassword("gate8844");
+//			source.setMaxOpenPreparedStatements(-1);
+//			// source.setMaxActive(20);
+//			source.setTestOnBorrow(true);
+//			source.setValidationQuery("SELECT 1;");
 			// BasicDataSource ds = new BasicDataSource();
 			// ds.setDriverClassName(driverClassName);
 			// ds.setUrl(url);
@@ -67,14 +77,14 @@ public class DBConfiguration {
 			// ds.setPassword(password);
 			// ds.setValidationQuery("SELECT 1");
 			// ds.setInitialSize(10);
-			PGPoolingDataSource source = new PGPoolingDataSource();
-			source.setDataSourceName("schedfox-ds1");
-			source.setServerName("66.196.247.157");
-			source.setDatabaseName("unique_manage");
-			source.setUser("dbuser");
-			source.setPassword("goldenwest");
-			source.setPortNumber(5432);
-			source.setMaxConnections(10);
+			 PGPoolingDataSource source = new PGPoolingDataSource();
+			 source.setDataSourceName("schedfox-ds1");
+			 source.setServerName("66.196.247.157");
+			 source.setDatabaseName("unique_manage");
+			 source.setUser("dbuser");
+			 source.setPassword("gate8844");
+			 source.setPortNumber(5432);
+			 source.setMaxConnections(10);
 			return source;
 			// ComboPooledDataSource ds = new ComboPooledDataSource();
 			// ds.setDriverClass(driverClassName);
