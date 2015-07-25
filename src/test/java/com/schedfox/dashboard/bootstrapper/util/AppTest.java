@@ -1,15 +1,13 @@
 package com.schedfox.dashboard.bootstrapper.util;
 
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
-import org.hibernate.SessionFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -33,7 +31,7 @@ public class AppTest extends TestCase {
 	
 	private EntityManagerFactory emf;
 
-    @PersistenceUnit
+	@PersistenceContext
     public void setEntityManagerFactory(EntityManagerFactory emf) {
         this.emf = emf;
     }
