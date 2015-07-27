@@ -1,5 +1,6 @@
 package com.schedfox.dashboard.bootstrapper.config;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Import;
  * Time: 12:34 PM
  */
 @Configuration
+@ComponentScan("com.schedfox.dashboard")
 @Import({MetricsConfiguration.class, DBConfiguration.class})
 public class AppConfiguration {
 }

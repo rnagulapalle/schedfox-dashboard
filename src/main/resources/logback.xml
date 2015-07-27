@@ -21,7 +21,7 @@
     <appender name="THREADLOCAL" class="com.schedfox.dashboard.bootstrapper.util.ThreadLocalMemoryAppender"/>
 
     <logger name="org.springframework" level="INFO"/>
-    <logger name="com.schedfox" level="DEBUG"/>
+    <logger name="com.schedfox.dashboard" level="INFO"/>
     <logger name="com.schedfox.dashboard.bootstrapper.filter.LogbackResponseServletFilter" level="TRACE"/>
 
     <root level="WARN">

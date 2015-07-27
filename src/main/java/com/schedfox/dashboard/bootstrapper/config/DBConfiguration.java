@@ -138,7 +138,7 @@ public class DBConfiguration {
 	 public SessionFactory sessionFactory() {
 	 LocalSessionFactoryBuilder sessionFactoryBuilder = new
 	 LocalSessionFactoryBuilder(dataSource());
-	 sessionFactoryBuilder.scanPackages("com.schedfox.dashboard.model").addProperties(getHibernateProperties());
+	 sessionFactoryBuilder.scanPackages("com.schedfox.dashboard.domain").addProperties(getHibernateProperties());
 	 return sessionFactoryBuilder.buildSessionFactory();
 	 }
 
