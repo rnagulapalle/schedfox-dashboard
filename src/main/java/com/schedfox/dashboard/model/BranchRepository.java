@@ -10,4 +10,10 @@ public interface BranchRepository {
 	public String getBranch();
 	
 	public List getBranchList();
+	
+	public Object getBranchMetrics(String branchId);
+	
+	public List getBranchLocationsAndMetrics(String branchId);
+	
+	public List getLocationEmplyeeMetrics(String branchId, String locationId);
 }
