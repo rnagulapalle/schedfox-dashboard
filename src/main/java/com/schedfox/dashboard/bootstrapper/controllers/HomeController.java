@@ -38,7 +38,13 @@ public class HomeController {
 	
     @RequestMapping
     public String home() {
-        return "/WEB-INF/views/angular-index.jsp";
+//        return "/WEB-INF/views/angular-index.jsp";
+    	return "redirect:/profit-analysis-report";
+    }
+    
+    @RequestMapping(value="/profit-analysis-report")
+    public String profitAnalysisReport() {
+        return "/WEB-INF/views/profitanalysis.jsp";
     }
 
     //TODO get start as query param and from that date calculate 3 weeks old data
