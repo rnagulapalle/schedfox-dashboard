@@ -1,5 +1,6 @@
 package com.schedfox.dashboard.bootstrapper.config;
 
+import com.schedfox.dashboard.domain.Branch;
 import java.util.Properties;
 
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -13,51 +14,49 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-
 @Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:db.properties")
 public class DBConfiguration {
 
-	@Value("${hibernate.format_sql}")
-	private String formatSql;
+    @Value("${hibernate.format_sql}")
+    private String formatSql;
 
-	@Value("${hibernate.show_sql}")
-	private String showSql;
+    @Value("${hibernate.show_sql}")
+    private String showSql;
 
-	@Value("${hibernate.dialect}")
-	private String dialect;
+    @Value("${hibernate.dialect}")
+    private String dialect;
 
-	@Value("${mysql.driver}")
-	private String driverClassName;
+    @Value("${mysql.driver}")
+    private String driverClassName;
 
-	@Value("${mysql.user}")
-	private String userName;
+    @Value("${mysql.user}")
+    private String userName;
 
-	@Value("${mysql.password}")
-	private String password;
+    @Value("${mysql.password}")
+    private String password;
 
-	@Value("${mysql.url}")
-	private String url;
+    @Value("${mysql.url}")
+    private String url;
 
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
-	}
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
-	private Properties getHibernateProperties() {
-		Properties properties = new Properties();
-		properties.put("hibernate.format_sql", formatSql);
-		properties.put("hibernate.show_sql", showSql);
-		properties.put("hibernate.dialect", dialect);
-		properties.put("hibernate.temp.use_jdbc_metadata_defaults", false);
-		return properties;
-	}
+    private Properties getHibernateProperties() {
+        Properties properties = new Properties();
+        properties.put("hibernate.format_sql", formatSql);
+        properties.put("hibernate.show_sql", showSql);
+        properties.put("hibernate.dialect", dialect);
+        properties.put("hibernate.temp.use_jdbc_metadata_defaults", false);
+        return properties;
+    }
 
-	@Bean
-	public BasicDataSource dataSource() {
-		try {
+    @Bean
+    public BasicDataSource dataSource() {
+        try {
 //			BasicDataSource source = new BasicDataSource();
 //			source.setDriverClassName("org.postgresql.Driver");
 //			source.setUrl("jdbc:postgresql://schedfoxdb.schedfox.com/unique_manage");
@@ -67,16 +66,16 @@ public class DBConfiguration {
 //			source.setTestOnBorrow(true);
 //			source.setValidationQuery("SELECT 1;");
 ////			source.setMaxActive(20);
-		
-			 BasicDataSource ds = new BasicDataSource();
-			 ds.setDriverClassName(driverClassName);
-			 ds.setUrl(url);
-			 ds.setUsername(userName);
-			 ds.setPassword(password);
-			 ds.setValidationQuery("SELECT 1;");
-			 ds.setInitialSize(10);
-			 ds.setTestOnBorrow(true);
-			 ds.setMaxOpenPreparedStatements(-1);
+
+            BasicDataSource ds = new BasicDataSource();
+            ds.setDriverClassName(driverClassName);
+            ds.setUrl(url);
+            ds.setUsername(userName);
+            ds.setPassword(password);
+            ds.setValidationQuery("SELECT 1;");
+            ds.setInitialSize(10);
+            ds.setTestOnBorrow(true);
+            ds.setMaxOpenPreparedStatements(-1);
 //			 PGPoolingDataSource source = new PGPoolingDataSource();
 //			 source.setDataSourceName("schedfox-ds1");
 //			 source.setServerName("66.196.247.157");
@@ -85,7 +84,7 @@ public class DBConfiguration {
 //			 source.setPassword("gate8844");
 //			 source.setPortNumber(5432);
 ////			 source.setMaxConnections(10);
-			return ds;
+            return ds;
 //			 ComboPooledDataSource ds = new ComboPooledDataSource();
 //			 ds.setDriverClass(driverClassName);
 //			 ds.setJdbcUrl(url);
@@ -103,10 +102,10 @@ public class DBConfiguration {
 //			 ds.setMinPoolSize(5);
 //			 ds.setPreferredTestQuery("Select 1;");
 //			 return ds;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 //	@Bean
 //	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
@@ -121,7 +120,6 @@ public class DBConfiguration {
 //
 //		return em;
 //	}
-
 //	@Bean
 //	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
 //		JpaTransactionManager transactionManager = new JpaTransactionManager();
@@ -129,23 +127,21 @@ public class DBConfiguration {
 //
 //		return transactionManager;
 //	}
-
 //	@Bean
 //	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
 //		return new PersistenceExceptionTranslationPostProcessor();
 //	}
-	 @Bean
-	 public SessionFactory sessionFactory() {
-	 LocalSessionFactoryBuilder sessionFactoryBuilder = new
-	 LocalSessionFactoryBuilder(dataSource());
-	 sessionFactoryBuilder.scanPackages("com.schedfox.dashboard.domain").addProperties(getHibernateProperties());
-	 return sessionFactoryBuilder.buildSessionFactory();
-	 }
+    @Bean
+    public SessionFactory sessionFactory() {
+        LocalSessionFactoryBuilder sessionFactoryBuilder = new LocalSessionFactoryBuilder(dataSource());
+        sessionFactoryBuilder.scanPackages("com.schedfox.dashboard.domain").addProperties(getHibernateProperties());
+        return sessionFactoryBuilder.buildSessionFactory();
+    }
 
-	 @Bean
-	 public HibernateTransactionManager txManager() {
-	 return new HibernateTransactionManager(sessionFactory());
-	 }
+    @Bean
+    public HibernateTransactionManager txManager() {
+        return new HibernateTransactionManager(sessionFactory());
+    }
 
 //	@Bean
 //	public JpaTransactionManager transactionManager() {
