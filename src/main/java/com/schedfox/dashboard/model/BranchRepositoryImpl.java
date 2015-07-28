@@ -116,7 +116,7 @@ public class BranchRepositoryImpl implements BranchRepository {
 		query.append("select ");
 		query.append("ename as employee_name, SUM(paid_amount) as paidamt, SUM(bill_amount) as billamt ,");
 		query.append("(SUM(COALESCE(paid_amount, 0)) / SUM(greatest(COALESCE (bill_amount, 0), 1)) * 100) AS percent ");
-		query.append("from champion_db.get_client_pay_amounts(:startDate, :endDate," + branchId +", null\\:\\:integer["+locationId+"]) amt ");
+		query.append("from champion_db.get_client_pay_amounts(:startDate, :endDate," + branchId +", \\'{"+locationId+"}\\'\\:\\:integer[]) amt ");
 		query.append("inner join champion_db.employee as emp  ON amt.eid = emp.employee_id where employee_first_name != '' and  emp.employee_is_deleted != 1 ");
 		query.append("GROUP BY ename order by ename asc");
 		
