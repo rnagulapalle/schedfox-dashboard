@@ -37,6 +37,9 @@ public class HomeController {
         return "/WEB-INF/views/angular-index.jsp";
     }
 
+    //TODO get start as query param and from that date calculate 3 weeks old data
+    //user should be able to switch from 3 weeks any end date he wants
+    //so second date is optional value
     @RequestMapping(method = RequestMethod.GET, value = "/profitanalysis", produces=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	ResponseEntity<?> test() {
