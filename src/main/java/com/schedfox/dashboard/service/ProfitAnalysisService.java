@@ -3,6 +3,7 @@ package com.schedfox.dashboard.service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class ProfitAnalysisService {
 	 * @return
 	 */
 	@Transactional
-	public List<ProfitAnalysisResponse> getProfitAnaylsisData() {
+	public List<ProfitAnalysisResponse> getProfitAnaylsisData(Date startDate, Date endDate) {
 		logger.info("inside getting API response");
 		List<ProfitAnalysisResponse> profitAnalysislist = new ArrayList<>();
 
@@ -68,13 +69,13 @@ public class ProfitAnalysisService {
 			logger.info("branch_name:" + branchName);
 			profitAnalysisResponse.setBranchId(branchId);
 			profitAnalysisResponse.setBranchName(branchName);
-			Map branchMetrics = (Map) branchRepo.getBranchMetrics(String.valueOf(branchId));
+			Map branchMetrics = (Map) branchRepo.getBranchMetrics(String.valueOf(branchId), startDate, endDate);
 			profitAnalysisResponse.setBranchMetrics(branchMetrics);
 			
 			logger.info("Metrics for branch " + String.valueOf(branchMetrics));
 
 			// get location and metrics for each branch
-			List locations = branchRepo.getBranchLocationsAndMetrics(String.valueOf(branchId));
+			List locations = branchRepo.getBranchLocationsAndMetrics(String.valueOf(branchId), startDate, endDate);
 			List<Location> locationList = new ArrayList<>();
 			Map<Location, Metrics> duplicateMap = new HashMap<>();
 			for( Object location : locations) {
@@ -140,7 +141,7 @@ public class ProfitAnalysisService {
 			//iterate through each location and get employees and their metrics
 			for(Location location: locationList) {
 				logger.info("inside getting employees metrics of location " + location.getLocationId() + " and branch " + branchId);
-				List employees = branchRepo.getLocationEmplyeeMetrics(location.getBranchId(), String.valueOf(location.getLocationId()));
+				List employees = branchRepo.getLocationEmplyeeMetrics(location.getBranchId(), String.valueOf(location.getLocationId()), startDate, endDate);
 				List<EmployeeMetrics> employeeMetricsList = new ArrayList<>();
 				for(Object employee: employees) {
 					Map empRow = (Map) employee;
