@@ -1,32 +1,36 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>angular-index.jsp</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/app.css"/>
-     <script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-1.6.2.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-ui.js"></script>
- 
-  <script>
-		$(document).ready(function(){
-			$('.accordion-toggle').click(function(){
-				$(this).toggleClass('minus');
-				var id=$(this).attr('data-target');
-				$(id).slideToggle(1000);
-				$(id).addClass('in');
-			});
-			$('.navbar-toggle').click(function(){
-			//	alert('asdasdasd');
-				
-				$(this).parent().next('div').toggleClass('in');
-				$(this).parent().next('div').slideToggle(500);
-			});
+<meta charset="utf-8">
+<title>angular-index.jsp</title>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/app.css" />
+<script
+	src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-1.6.2.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-ui.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/lib/d3/d3min.js"></script>
+<script>
+	$(document).ready(function() {
+		$('.accordion-toggle').click(function() {
+			$(this).toggleClass('minus');
+			var id = $(this).attr('data-target');
+			$(id).slideToggle(1000);
+			$(id).addClass('in');
 		});
-	</script>
+		$('.navbar-toggle').click(function() {
+			//	alert('asdasdasd');
+
+			$(this).parent().next('div').toggleClass('in');
+			$(this).parent().next('div').slideToggle(500);
+		});
+	});
+</script>
 </head>
 <body ng-app="myApp">
-  <!-- <ul class="menu">
+	<!-- <ul class="menu">
     <li><a href="#/view1">view1</a></li>
     <li><a href="#/view2">view2</a></li>
   </ul>
@@ -35,7 +39,7 @@
 
   <div>Angular seed app: v<span app-version></span></div>
  -->
- <section class="container">
+	<section class="container">
 		<div class="col-lg-12 col-sm-12 col-xs-12">
 			<div class="reportClass">
 				<!--<p class="date_info col-lg-3 col-sm-6 col-xs-12">(From date : <span id="fd"></span>  To date : <span id="tda"></span>)</p>-->
@@ -46,7 +50,7 @@
 					<div class="col-lg-3 col-sm-3 col-xs-6 submitbtndiv m-b-10 text-left p-0"><button id="resetId" class="btn btn-default">Reset</button></div>
 				</div> -->
 			</div>
-			
+
 		</div>
 		<div class="col-lg-12 col-sm-12 col-xs-12">
 			<div id='dashboard'></div>
@@ -71,7 +75,7 @@
 			</div>
 		</div>
 	</section>
-  <!-- In production use:
+	<!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
   -->
   <script src="${pageContext.request.contextPath}/resources/lib/angular/angular.js"></script>
@@ -80,7 +84,8 @@
   <script src="${pageContext.request.contextPath}/resources/js/controllers.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/filters.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/directives.js"></script>
-  <script src="${pageContext.request.contextPath}/resources/lib/d3/d3min.js"></script>
-  <script src="${pageContext.request.contextPath}/resources/js/profitanalysis.js"></script>
+
+	<script
+		src="${pageContext.request.contextPath}/resources/js/profitanalysis.js"></script>
 </body>
 </html>
