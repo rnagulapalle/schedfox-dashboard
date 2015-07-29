@@ -42,14 +42,14 @@ public class Branch {
     /**
      * @return the ratios
      */
-    public ArrayList<Location> getRatios() {
+    public ArrayList<Location> getLocations() {
         return locations;
     }
 
     /**
      * @param ratios the ratios to set
      */
-    public void setRatios(ArrayList<Location> ratios) {
+    public void setLocations(ArrayList<Location> ratios) {
         this.locations = ratios;
     }
 
