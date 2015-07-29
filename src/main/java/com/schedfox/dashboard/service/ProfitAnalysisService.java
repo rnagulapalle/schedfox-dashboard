@@ -34,10 +34,6 @@ public class ProfitAnalysisService {
     @Autowired
     BranchRepository branchRepo;
 
-    public List<Branch> getBranchDetails() {
-        List<Branch> list = branchRepo.getBranchDetails();
-        return list;
-    }
 
     /**
      * this method should get all branches and its metrics paid amount, bill
@@ -76,31 +72,7 @@ public class ProfitAnalysisService {
 
             logger.info("Metrics for branch " + String.valueOf(branch.getBranchMetrics()));
 
-            List<Location> locationList = branch.getRatios();
-            
-            //iterate through each location and get employees and their metrics
-            for (Location location : locationList) {
-                logger.info("inside getting employees metrics of location " + location.getLocationId() + " and branch " + location.getBranchId());
-                List employees = branchRepo.getLocationEmplyeeMetrics(location.getBranchId(), String.valueOf(location.getLocationId()));
-                List<EmployeeMetrics> employeeMetricsList = new ArrayList<>();
-                for (Object employee : employees) {
-                    Map empRow = (Map) employee;
-                    String eName = (String) empRow.get("employee_name");
-                    BigDecimal ePaidAmount = (BigDecimal) empRow.get("paidamt");
-                    BigDecimal eBillAmount = (BigDecimal) empRow.get("billamt");
-                    BigDecimal ePercent = (BigDecimal) empRow.get("percent");
-
-                    EmployeeMetrics employeeMetrics = new EmployeeMetrics();
-                    employeeMetrics.setBillAmount(eBillAmount);
-                    employeeMetrics.setPaidAmount(ePaidAmount);
-                    employeeMetrics.setPercent(ePercent);
-                    employeeMetrics.setEmployeeName(eName);
-
-                    employeeMetricsList.add(employeeMetrics);
-
-                }
-                location.setEmployeeMetricsList(employeeMetricsList);
-            }
+            List<Location> locationList = branch.getLocations();
             profitAnalysisResponse.setLocations(locationList);
             profitAnalysislist.add(profitAnalysisResponse);
 
