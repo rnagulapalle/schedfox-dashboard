@@ -74,12 +74,12 @@
   <!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
   -->
-  <script src="${pageContext.request.contextPath}/resources/lib/angular/angular.js"></script>
+  <%-- <script src="${pageContext.request.contextPath}/resources/lib/angular/angular.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/app.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/services.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/controllers.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/filters.js"></script>
-  <script src="${pageContext.request.contextPath}/resources/js/directives.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/js/directives.js"></script> --%>
   
   <script src="${pageContext.request.contextPath}/resources/js/profitanalysis.js"></script>
 </body>
