@@ -152,7 +152,7 @@ h3.mainhead{
     padding: 10px 0 20px;
     text-align: center;
 }
-#dashboard {
+#dashboard-backup {
     background: #f8f8f8 none repeat scroll 0 0;
     margin: 0;
     overflow: auto;
@@ -166,7 +166,7 @@ h3.mainhead{
 .piechartsvg {
     vertical-align: middle;
 }
-#dashboard  .legend {
+#dashboard-backup  .legend {
     display: inline-block;
     margin: 0 auto;
     vertical-align: middle;
