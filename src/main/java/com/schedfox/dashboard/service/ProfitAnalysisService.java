@@ -1,11 +1,9 @@
 package com.schedfox.dashboard.service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -16,11 +14,8 @@ import org.springframework.stereotype.Service;
 
 import com.schedfox.dashboard.domain.Branch;
 import com.schedfox.dashboard.model.BranchRepository;
-import com.schedfox.dashboard.response.EmployeeMetrics;
 import com.schedfox.dashboard.response.Location;
-import com.schedfox.dashboard.response.Metrics;
 import com.schedfox.dashboard.response.ProfitAnalysisResponse;
-import java.util.Date;
 
 /**
  *
@@ -29,6 +24,7 @@ import java.util.Date;
  */
 @Service("profitAnalysisService")
 public class ProfitAnalysisService {
+
 
     private static final Logger logger = LoggerFactory.getLogger(ProfitAnalysisService.class);
     @Autowired
@@ -50,12 +46,9 @@ public class ProfitAnalysisService {
      * @return
      */
     @Transactional
-    public List<ProfitAnalysisResponse> getProfitAnaylsisData() {
+    public List<ProfitAnalysisResponse> getProfitAnaylsisData(Date startDate, Date endDate) {
         logger.info("inside getting API response");
         List<ProfitAnalysisResponse> profitAnalysislist = new ArrayList<>();
-
-        Date startDate = new Date("07/14/2015");
-        Date endDate = new Date("07/28/2015");
 
         List<Branch> branches = branchRepo.getBranchList(startDate, endDate);
         logger.info("Total branches received ....." + branches.size());
@@ -71,6 +64,7 @@ public class ProfitAnalysisService {
             profitAnalysisResponse.setBranchMetrics(branch.getBranchMetrics());
 
             logger.info("Metrics for branch " + String.valueOf(branch.getBranchMetrics()));
+
 
             List<Location> locationList = branch.getLocations();
             profitAnalysisResponse.setLocations(locationList);
