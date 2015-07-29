@@ -44,7 +44,7 @@ public class HomeController {
     
     @RequestMapping(value="/profit-analysis-report")
     public String profitAnalysisReport() {
-        return "/WEB-INF/decorators/decorator.jsp";
+        return "/WEB-INF/views/profitanalysis.jsp";
     }
 
     //TODO get start as query param and from that date calculate 3 weeks old data
