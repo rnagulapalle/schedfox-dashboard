@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/app.css"/>
      <script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-1.6.2.js"></script>
     <script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-ui.js"></script>
- 
+ <script src="${pageContext.request.contextPath}/resources/lib/d3/d3min.js"></script>
   <script>
 		$(document).ready(function(){
 			$('.accordion-toggle').click(function(){
@@ -80,7 +80,7 @@
   <script src="${pageContext.request.contextPath}/resources/js/controllers.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/filters.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/directives.js"></script>
-  <script src="${pageContext.request.contextPath}/resources/lib/d3/d3min.js"></script>
+  
   <script src="${pageContext.request.contextPath}/resources/js/profitanalysis.js"></script>
 </body>
 </html>
