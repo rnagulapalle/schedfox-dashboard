@@ -2,12 +2,18 @@
 <!doctype html>
 <html lang="en">
 <head>
+	<meta charset="utf-8">
     <title><decorator:title/></title>
     <decorator:head/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
+    <link href="${pageContext.request.contextPath}/resources/css/jquery.ui.datepicker.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/jquery-ui.css" rel="stylesheet">
+    
+    
     <link href="${pageContext.request.contextPath}/resources/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
+	<link href="${pageContext.request.contextPath}/resources/css/font-awesome.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/resources/css/style.css" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -26,7 +32,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Project name</a>
+                <a class="navbar-brand" href="#">Schedfox Dashboard</a>
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -39,21 +45,20 @@
     </div>
 
     <div class="container" style="padding-top: 60px">
-        <div class="starter-template">
+        <!-- <div class="starter-template">
             <h1>Bootstrap starter template</h1>
             <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
         </div>
-
+ -->
         <div class="body">
-            <h1>Decorated body</h1>
+            <h2>Profit Analysis Report</h2>
             <decorator:body />
         </div>
 
     </div><!-- /.container -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="${pageContext.request.contextPath}/resources/lib/bootstrap/js/bootstrap.min.js"></script>
+    <%-- <script src="${pageContext.request.contextPath}/resources/lib/bootstrap/js/bootstrap.min.js"></script> --%>
 </body>
 </html>
