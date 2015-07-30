@@ -36,7 +36,8 @@ function dashboard(id, fData){
         lineHeight = 1.1, // ems
         y = text.attr("y"),
         dy = parseFloat(text.attr("dy")),
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+        tspan = text.text(null).append("tspan").attr("x", -25).attr("y", 3).attr("dy", dy + "em");
+    	text.attr("transform", "rotate(-65)" );
     while (word = words.pop()) {
       line.push(word);
       tspan.text(line.join(" "));
@@ -44,7 +45,7 @@ function dashboard(id, fData){
         line.pop();
         tspan.text(line.join(" "));
         line = [word];
-        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+        tspan = text.append("tspan").attr("x", -25).attr("y", 3).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
       }
     }
 });
