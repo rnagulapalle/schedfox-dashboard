@@ -52,6 +52,44 @@ public class Branch {
     public void setLocations(ArrayList<Location> ratios) {
         this.locations = ratios;
     }
+    
+    public BigDecimal getPaidAmt() {
+        double paidamt = 0;
+        try {
+        if (locations != null && !locations.isEmpty()) {
+            for (int l = 0; l < this.locations.size(); l++) {
+                try {
+                    paidamt += locations.get(l).getPaidAmount().doubleValue();
+                } catch (Exception exe) {
+                }
+            }
+        }
+        } catch (Exception exe) {}
+        return new BigDecimal(paidamt);
+    }
+    
+    public BigDecimal getBillAmt() {
+        double billamt = 0;
+        try {
+        if (locations != null && !locations.isEmpty()) {
+            for (int l = 0; l < this.locations.size(); l++) {
+                try {
+                    billamt += locations.get(l).getBillAmount().doubleValue();
+                } catch (Exception exe) {
+                }
+            }
+        }
+        } catch (Exception exe) {}
+        return new BigDecimal(billamt);
+    }
+    
+    public BigDecimal getPercent() {
+        try {
+            return new BigDecimal(this.getPaidAmt().doubleValue() / this.getBillAmt().doubleValue());
+        } catch (Exception exe) {
+            return new BigDecimal(0);
+        }
+    }
 
     public Map getBranchMetrics() {
         HashMap<String, Object> branchMetrics = new HashMap<String, Object>();

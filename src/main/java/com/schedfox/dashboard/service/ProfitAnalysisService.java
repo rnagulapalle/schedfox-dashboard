@@ -61,10 +61,9 @@ public class ProfitAnalysisService {
             
             profitAnalysisResponse.setBranchId(branch.getBranchId());
             profitAnalysisResponse.setBranchName(branch.getBranchName());
-            profitAnalysisResponse.setBranchMetrics(branch.getBranchMetrics());
-
-            logger.info("Metrics for branch " + String.valueOf(branch.getBranchMetrics()));
-
+            profitAnalysisResponse.setBillamt(branch.getBillAmt());
+            profitAnalysisResponse.setPaidamt(branch.getPaidAmt());
+            profitAnalysisResponse.setPercent(branch.getPercent());
 
             List<Location> locationList = branch.getLocations();
             profitAnalysisResponse.setLocations(locationList);
@@ -72,6 +71,8 @@ public class ProfitAnalysisService {
 
         }
 
+        profitAnalysislist.get(2).getLocations().get(3).getBillAmount();
+        
         return profitAnalysislist;
     }
 }

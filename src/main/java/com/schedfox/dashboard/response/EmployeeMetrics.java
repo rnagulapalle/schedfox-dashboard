@@ -27,7 +27,12 @@ public class EmployeeMetrics implements Serializable {
     }
 
     public BigDecimal getPaidAmount() {
-        return paidAmount;
+        if (paidAmount != null) {
+            return paidAmount;
+        } else {
+            return new BigDecimal(0);
+        }
+        
     }
 
     public void setPaidAmount(BigDecimal paidAmount) {
@@ -35,7 +40,11 @@ public class EmployeeMetrics implements Serializable {
     }
 
     public BigDecimal getBillAmount() {
-        return billAmount;
+        if (billAmount != null) {
+            return billAmount;
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setBillAmount(BigDecimal billAmount) {
