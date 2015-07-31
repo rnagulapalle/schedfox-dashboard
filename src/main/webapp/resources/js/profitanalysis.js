@@ -167,8 +167,9 @@ function dashboard(id, fData) {
 		}).attr("text-anchor", "middle");
 
 		function mouseover(d) {
-			$('#table2').hide();
-			$('#locateHead').hide();
+			$('#table2').hide("slow");
+			$('#locateHead').hide("slow");
+			
 			drawTable(d, firstDate, toDate);
 		}
 
@@ -461,7 +462,15 @@ function drawTable(d) {
 			"border-collapse:collapse;"), thead = table.append("thead"), tbody = table
 			.append("tbody");
 
-	thead.append("tr").selectAll("th").data(columns).enter().append("th").text(
+	thead.append("tr").selectAll("th").data(columns).enter().append("th")
+	.attr("class", function(data){
+		if(data === "location") {
+			return "col-xs-9 col-sm-6 col-lg-8";
+		} else{
+			return "col-xs-4 col-sm-2 col-lg-3";
+		}
+	})
+	.text(
 			function(column) {
 				return column;
 			});

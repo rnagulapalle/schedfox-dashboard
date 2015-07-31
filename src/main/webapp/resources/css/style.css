@@ -318,6 +318,9 @@ div#spinner {
 	z-index: 2;
 	overflow: auto;
 }
+h2,h3{
+	color: #3498db
+}
 
 
 
