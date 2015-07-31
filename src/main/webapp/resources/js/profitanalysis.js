@@ -15,6 +15,9 @@ var startDate = cv.getFullYear() + "-" + ("0" + (cv.getMonth() + 1)).slice(-2)
 firstDate = startDate;
 toDate = toDate;
 
+var apiUrl = "profitanalysis?startDate="+startDate+"&endDate="+toDate;
+
+
 // ajax loader functions
 var spinnerVisible = false;
 function showProgress() {
@@ -420,14 +423,17 @@ $("#fromdatepicker").datepicker({
 	dateFormat : 'yy-mm-dd'
 });
 
+//ajax loader start
 showProgress();
-var jqxhr = $.getJSON( "profitanalysis?startDate=2015-07-14&endDate=2015-07-28", function(error, data) {})
+
+var jqxhr = $.getJSON( apiUrl, function(error, data) {})
 	  .done(function(data) {
 	    dashboard('#dashboard', data);
 	  })
 	  .fail(function(error) {
 	  })
 	  .always(function() {
+		  //ajax loader stop
 	    hideProgress();
 	  });
 
