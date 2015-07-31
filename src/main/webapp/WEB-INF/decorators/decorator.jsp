@@ -14,12 +14,36 @@
     <link href="${pageContext.request.contextPath}/resources/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<link href="${pageContext.request.contextPath}/resources/css/font-awesome.css" rel="stylesheet">
 	<link href="${pageContext.request.contextPath}/resources/css/style.css" rel="stylesheet">
+	<script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-1.11.3.min.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-ui.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/lib/d3/d3min.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
+    
+<script>
+	$(document).ready(function() {
+	
+		$('.accordion-toggle').click(function() {
+			$(this).toggleClass('minus');
+			var id = $(this).attr('data-target');
+			$(id).slideToggle(1000);
+			$(id).addClass('in');
+		});
+		$('.navbar-toggle').click(function() {
+			//	alert('asdasdasd');
+
+			$(this).parent().next('div').toggleClass('in');
+			$(this).parent().next('div').slideToggle(500);
+		});
+	});
+	$( document ).ajaxComplete(function() {
+		  $( ".log" ).text( "Triggered ajaxComplete handler." );
+		});
+</script>
 </head>
 <body <decorator:getProperty property="body.ng-app" writeEntireProperty="true"/>>
 
