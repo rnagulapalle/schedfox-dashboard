@@ -34,6 +34,22 @@
 		<div class="col-lg-12 col-sm-12 col-xs-12">
 			<div id='dashboard'></div>
 		</div>
+		<div class="col-lg-12 col-sm-12 col-xs-12">
+			<div class="checkbox">
+				<label> <input type="checkbox" id="high" value="high"> High Profit 
+				</label>
+			</div>
+			<div class="checkbox">
+				<label> <input type="checkbox" id="med" value="med">
+					Medium Profit
+				</label>
+			</div>
+			<div class="checkbox">
+				<label> <input type="checkbox" id="low" value="low">
+					Low Profit
+				</label>
+			</div>
+		</div>
 		<div class="col-lg-12 col-sm-12 col-xs-12 p-0">
 			<div class="tabledets">
 				<!--<h3 class="col-lg-12 col-sm-12 col-xs-12 p-0 text-center">Branch 1</h3>-->

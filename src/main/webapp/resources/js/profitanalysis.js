@@ -15,8 +15,7 @@ var startDate = cv.getFullYear() + "-" + ("0" + (cv.getMonth() + 1)).slice(-2)
 firstDate = startDate;
 toDate = toDate;
 
-var apiUrl = "profitanalysis?startDate="+startDate+"&endDate="+toDate;
-
+var apiUrl = "profitanalysis?startDate=" + startDate + "&endDate=" + toDate;
 
 // ajax loader functions
 var spinnerVisible = false;
@@ -169,8 +168,12 @@ function dashboard(id, fData) {
 		function mouseover(d) {
 			$('#table2').hide("slow");
 			$('#locateHead').hide("slow");
-			
+			//before draw table reset filters
+			SCHEDFOX.filters.resetFilters();
 			drawTable(d, firstDate, toDate);
+			LOCATION_ROWS = $('div#tableId table tr').not('thead tr');
+
+			console.log(LOCATION_ROWS);
 		}
 
 		function mouseout(d) { // utility function to be called on mouseout.
@@ -424,20 +427,17 @@ $("#fromdatepicker").datepicker({
 	dateFormat : 'yy-mm-dd'
 });
 
-//ajax loader start
+// ajax loader start
 showProgress();
 
-var jqxhr = $.getJSON( apiUrl, function(error, data) {})
-	  .done(function(data) {
-	    dashboard('#dashboard', data);
-	  })
-	  .fail(function(error) {
-	  })
-	  .always(function() {
-		  //ajax loader stop
-	    hideProgress();
-	  });
-
+var jqxhr = $.getJSON(apiUrl, function(error, data) {
+}).done(function(data) {
+	dashboard('#dashboard', data);
+}).fail(function(error) {
+}).always(function() {
+	// ajax loader stop
+	hideProgress();
+});
 
 /**
  * This function is responsible for drawing out the locations table once a
@@ -462,18 +462,16 @@ function drawTable(d) {
 			"border-collapse:collapse;"), thead = table.append("thead"), tbody = table
 			.append("tbody");
 
-	thead.append("tr").selectAll("th").data(columns).enter().append("th")
-	.attr("class", function(data){
-		if(data === "location") {
-			return "col-xs-9 col-sm-6 col-lg-8";
-		} else{
-			return "col-xs-4 col-sm-2 col-lg-3";
-		}
-	})
-	.text(
-			function(column) {
-				return column;
-			});
+	thead.append("tr").selectAll("th").data(columns).enter().append("th").attr(
+			"class", function(data) {
+				if (data === "location") {
+					return "col-xs-9 col-sm-6 col-lg-8";
+				} else {
+					return "col-xs-4 col-sm-2 col-lg-3";
+				}
+			}).text(function(column) {
+		return column;
+	});
 
 	// create a row for each object in the data
 	var rows = tbody.selectAll("tr").data(d.locations).enter().append("tr")
@@ -614,3 +612,153 @@ function employeeSubTable(locationData) {
 	});
 
 }
+
+// filter code starts here
+var SCHEDFOX = SCHEDFOX || {};
+var LOCATION_ROWS = null;
+SCHEDFOX.filters = {
+
+	user_filter_options : {
+		high : false,
+		low : false,
+		med : false
+	},
+	filterRows : function(el) {
+		// check user selected before table drawn
+		if ($(el).is(':checked')) {
+			if (el && el.value === 'high') {
+				this.user_filter_options.high = true;
+			}
+			if (el && el.value === 'med') {
+				this.user_filter_options.med = true;
+			}
+			if (el && el.value === 'low') {
+				this.user_filter_options.low = true;
+			}
+		} else {
+			// they are unchecked
+			if (el && el.value === 'high') {
+				this.user_filter_options.high = false;
+			}
+			if (el && el.value === 'med') {
+				this.user_filter_options.med = false;
+			}
+			if (el && el.value === 'low') {
+				this.user_filter_options.low = false;
+			}
+		}
+
+		if (LOCATION_ROWS) {
+			
+			if (this.isAnyFilterChecked()) {
+				console.log('inside location rows checked');
+				if(this.isAllFiltersChecked()) {
+					this.displayAllRows();
+					return;
+				}
+				//handle user selects any one
+				if(this.user_filter_options.high && !this.user_filter_options.med && !this.user_filter_options.low) {
+					console.log('only high profit filter selected');
+					var lowRow = LOCATION_ROWS.filter('.lowRow').show();
+					LOCATION_ROWS.not(lowRow).hide('slow');
+					return;
+				}
+				if(this.user_filter_options.med && !this.user_filter_options.high && !this.user_filter_options.low) {
+					console.log('only medium profit filter selected');
+					var mediumRow = LOCATION_ROWS.filter('.mediumRow').show();
+					LOCATION_ROWS.not(mediumRow).hide('slow');
+					return;
+				}
+				if(this.user_filter_options.low && !this.user_filter_options.med && !this.user_filter_options.high) {
+					console.log('only low profit filter selected');
+					var highRow = LOCATION_ROWS.filter('.highRow').show();
+					LOCATION_ROWS.not(highRow).hide('slow');
+					return;
+				}
+				
+				//handle user selects any two filters
+				if(this.user_filter_options.high && this.user_filter_options.med && !this.user_filter_options.low) {
+					console.log('user selected high and medium profit filters');
+					var lowRow = LOCATION_ROWS.filter('.lowRow').show();
+					LOCATION_ROWS.not(lowRow).hide('slow');
+					LOCATION_ROWS.filter('.mediumRow').show('slow');
+					return;
+				}
+				
+				if(this.user_filter_options.high && !this.user_filter_options.med && this.user_filter_options.low) {
+					console.log('user selected high and low profit filters');
+					var lowRow = LOCATION_ROWS.filter('.lowRow').show();
+					LOCATION_ROWS.not(lowRow).hide('slow');
+					LOCATION_ROWS.filter('.highRow').show('slow');
+					return;
+				}
+				
+				if(!this.user_filter_options.high && this.user_filter_options.med && this.user_filter_options.low) {
+					console.log('user selected med and low profit filters');
+					var highRow = LOCATION_ROWS.filter('.highRow').show();
+					LOCATION_ROWS.not(highRow).hide('slow');
+					LOCATION_ROWS.filter('.mediumRow').show('slow');
+					return;
+				}
+//				
+			} else {
+				this.displayAllRows();
+				return;
+			}
+		
+		}// end of location_rows check
+
+	},
+	isAllFiltersChecked : function() {
+		return (this.user_filter_options.high && this.user_filter_options.med && this.user_filter_options.low); 
+	},
+	isAnyFilterChecked : function () {
+		return (this.user_filter_options.high || this.user_filter_options.med || this.user_filter_options.low) ;
+			
+	},
+	displayAllRows: function () {
+		console.log('inside show all');
+		var highRow = LOCATION_ROWS.filter('.highRow').show('slow');
+		var highRow = LOCATION_ROWS.filter('.mediumRow').show('slow');
+		var highRow = LOCATION_ROWS.filter('.lowRow').show('slow');
+	},
+	resetFilters: function() {
+		$("input:checkbox").removeAttr('checked');
+		this.user_filter_options.high = false;
+		this.user_filter_options.low = false;
+		this.user_filter_options.med = false;
+	}
+};
+
+$(document).ready(function() {
+
+	$('div.checkbox input').click(function(e) {
+
+		switch (this.value) {
+		case 'high':
+			// code block
+			SCHEDFOX.filters.filterRows(this);
+			break;
+		case 'med':
+			// code block
+			SCHEDFOX.filters.filterRows(this);
+			break;
+		case 'low':
+			// code block
+			SCHEDFOX.filters.filterRows(this);
+			break;
+
+		}
+
+	});
+
+	$('#showWhiteButton').click(function() {
+		var white = rows.filter('.white').show();
+		rows.not(white).hide();
+	});
+
+	$('#showAll').click(function() {
+		rows.show();
+	});
+
+});

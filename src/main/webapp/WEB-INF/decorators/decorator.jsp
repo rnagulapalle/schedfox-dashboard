@@ -25,6 +25,7 @@
     <![endif]-->
     
 <script>
+	
 	$(document).ready(function() {
 	
 		$('.accordion-toggle').click(function() {
@@ -39,10 +40,8 @@
 			$(this).parent().next('div').toggleClass('in');
 			$(this).parent().next('div').slideToggle(500);
 		});
+		
 	});
-	$( document ).ajaxComplete(function() {
-		  $( ".log" ).text( "Triggered ajaxComplete handler." );
-		});
 </script>
 </head>
 <body <decorator:getProperty property="body.ng-app" writeEntireProperty="true"/>>
