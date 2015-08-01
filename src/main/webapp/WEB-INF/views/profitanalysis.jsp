@@ -35,20 +35,25 @@
 			<div id='dashboard'></div>
 		</div>
 		<div class="col-lg-12 col-sm-12 col-xs-12">
-			<div class="checkbox">
-				<label> <input type="checkbox" id="high" value="high"> High Profit 
-				</label>
-			</div>
-			<div class="checkbox">
-				<label> <input type="checkbox" id="med" value="med">
-					Medium Profit
-				</label>
-			</div>
-			<div class="checkbox">
-				<label> <input type="checkbox" id="low" value="low">
-					Low Profit
-				</label>
-			</div>
+			<fieldset>
+				 <legend> Select filter </legend>
+
+				<div class="checkbox checkbox-success checkbox-inline">
+					<input type="checkbox" class="styled" id="inlineCheckbox1"
+						value="high"> <label for="inlineCheckbox1"> High
+						Profit </label>
+				</div>
+				<div class="checkbox checkbox-warning checkbox-inline">
+					<input type="checkbox" class="styled" id="inlineCheckbox2"
+						value="med"> <label for="inlineCheckbox2"> Medium
+						Profit </label>
+				</div>
+				<div class="checkbox checkbox-danger checkbox-inline">
+					<input type="checkbox" class="styled" id="inlineCheckbox3"
+						value="low"> <label for="inlineCheckbox3"> Low
+						Profit </label>
+				</div>
+			</fieldset>
 		</div>
 		<div class="col-lg-12 col-sm-12 col-xs-12 p-0">
 			<div class="tabledets">

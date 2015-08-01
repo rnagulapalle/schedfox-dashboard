@@ -14,6 +14,8 @@
     <link href="${pageContext.request.contextPath}/resources/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<link href="${pageContext.request.contextPath}/resources/css/font-awesome.css" rel="stylesheet">
 	<link href="${pageContext.request.contextPath}/resources/css/style.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/resources/css/awesome-bootstrap-checkbox.css" rel="stylesheet">
+	
 	<script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-1.11.3.min.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-ui.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/lib/d3/d3min.js"></script>
