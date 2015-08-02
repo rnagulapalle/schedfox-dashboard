@@ -488,16 +488,55 @@ function drawTable(d) {
 							return 'lowRow';
 						}
 					}).attr('style', function(data) {
-						//TODO: if user selects filter
-//						if ((data.percentage * 100.0) > highColor && SCHEDFOX && SCHEDFOX.filters) {
-//							if(SCHEDFOX.filters.user_filter_options.high && SCHEDFOX.filters.user_filter_options.med) {
-//								return 'display:none;';
-//							}
-//						} else if ((data.percentage * 100.0) < highColor && (data.percentage * 100.0) > lowColor && SCHEDFOX && SCHEDFOX.filters.user_filter_options.med) {
-//							return 'display:none;'
-//						} else if(SCHEDFOX && SCHEDFOX.filters.user_filter_options.low) {
-//							return 'display:none;';
-//						}
+						if(SCHEDFOX.filters.isAllFiltersChecked() || SCHEDFOX.filters.isAnyFilterChecked()) {
+							//dont do hide any
+							return 'display:trable-row';
+						} else{
+							//check which one he is selected
+							//user wants to see high profit rows
+							if(SCHEDFOX.filters.isOnlyHighSelected()) {
+								//check this row is high profit row otherwise display none
+								if((data.percentage * 100.0) > highColor || (data.percentage * 100.0) < highColor
+								&& (data.percentage * 100.0) > lowColor) {
+									return 'display:none';
+								} 
+							}
+							//is only med selected, user wants to see only med rows
+							if(SCHEDFOX.filters.isOnlyMedSelected()) {
+								if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									return 'display:trable-row';
+								} else{
+									return 'display:none';
+								}
+							}
+							
+							//is only med selected, user wants to see only low profit rows
+							if(SCHEDFOX.filters.isOnlyLowSelected()) {
+								if ((data.percentage * 100.0) > highColor) {
+									return 'display:trable-row';
+								} else{
+									return 'display:none';
+								}
+							}
+							
+							if(SCHEDFOX.filters.isHighAndMedSelected()) {
+								if ((data.percentage * 100.0) > highColor) {
+									return 'display:none';
+								}
+							}
+							if(SCHEDFOX.filters.isHighAndLowSelected()) {
+								if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									return 'display:none';
+								}
+							}
+							if(SCHEDFOX.filters.isLowAndMedSelected()){
+								if ((data.percentage * 100.0) > lowColor) {
+									return 'display:none';
+								}
+							}
+						}
 					});;
 
 	// create a cell in each row for each column
@@ -735,6 +774,25 @@ SCHEDFOX.filters = {
 		var highRow = LOCATION_ROWS.filter('.highRow').show('slow');
 		var highRow = LOCATION_ROWS.filter('.mediumRow').show('slow');
 		var highRow = LOCATION_ROWS.filter('.lowRow').show('slow');
+	},
+	isOnlyHighSelected: function () {
+		return (this.user_filter_options.high && !this.user_filter_options.med && !this.user_filter_options.low);
+			
+	},
+	isOnlyMedSelected: function () {
+		return (!this.user_filter_options.high && this.user_filter_options.med && !this.user_filter_options.low);
+	},
+	isOnlyLowSelected: function () {
+		return (!this.user_filter_options.high && !this.user_filter_options.med && this.user_filter_options.low);
+	},
+	isHighAndMedSelected: function () {
+		return (this.user_filter_options.high && this.user_filter_options.med && !this.user_filter_options.low);
+	},
+	isHighAndLowSelected: function () {
+		return (this.user_filter_options.high && !this.user_filter_options.med && this.user_filter_options.low);
+	},
+	isLowAndMedSelected: function () {
+		return (!this.user_filter_options.high && this.user_filter_options.med && this.user_filter_options.low);
 	},
 	resetFilters: function() {
 		$("input:checkbox").removeAttr('checked');
