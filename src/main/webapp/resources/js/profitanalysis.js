@@ -172,8 +172,6 @@ function dashboard(id, fData) {
 			SCHEDFOX.filters.resetFilters();
 			drawTable(d, firstDate, toDate);
 			LOCATION_ROWS = $('div#tableId table tr').not('thead tr');
-
-			console.log(LOCATION_ROWS);
 		}
 
 		function mouseout(d) { // utility function to be called on mouseout.
@@ -479,14 +477,28 @@ function drawTable(d) {
 					"class",
 					function(data) {
 						if ((data.percentage * 100.0) > highColor) {
+							//red color
 							return 'highRow';
 						} else if ((data.percentage * 100.0) < highColor
 								&& (data.percentage * 100.0) > lowColor) {
+							//orange rows
 							return 'mediumRow'
 						} else {
+							//green rows
 							return 'lowRow';
 						}
-					});
+					}).attr('style', function(data) {
+						//TODO: if user selects filter
+//						if ((data.percentage * 100.0) > highColor && SCHEDFOX && SCHEDFOX.filters) {
+//							if(SCHEDFOX.filters.user_filter_options.high && SCHEDFOX.filters.user_filter_options.med) {
+//								return 'display:none;';
+//							}
+//						} else if ((data.percentage * 100.0) < highColor && (data.percentage * 100.0) > lowColor && SCHEDFOX && SCHEDFOX.filters.user_filter_options.med) {
+//							return 'display:none;'
+//						} else if(SCHEDFOX && SCHEDFOX.filters.user_filter_options.low) {
+//							return 'display:none;';
+//						}
+					});;
 
 	// create a cell in each row for each column
 	var cells = rows.selectAll("td").data(function(row) {
@@ -576,6 +588,8 @@ function employeeSubTable(locationData) {
 						} else {
 							return 'lowRow';
 						}
+					}).attr('style', function(data) {
+						console.log(data);
 					});
 
 	// create a cell in each row for each column
