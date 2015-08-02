@@ -3,6 +3,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- refresh the page every 2 hours -->
+<meta http-equiv="refresh" content="7200">
 <title>angular-index.jsp</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/app.css" />
