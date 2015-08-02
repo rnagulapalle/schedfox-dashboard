@@ -169,7 +169,7 @@ function dashboard(id, fData) {
 			$('#table2').hide("slow");
 			$('#locateHead').hide("slow");
 			//before draw table reset filters
-			SCHEDFOX.filters.resetFilters();
+			//SCHEDFOX.filters.resetFilters();
 			drawTable(d, firstDate, toDate);
 			LOCATION_ROWS = $('div#tableId table tr').not('thead tr');
 		}
@@ -488,7 +488,7 @@ function drawTable(d) {
 							return 'lowRow';
 						}
 					}).attr('style', function(data) {
-						if(SCHEDFOX.filters.isAllFiltersChecked() || SCHEDFOX.filters.isAnyFilterChecked()) {
+						if(SCHEDFOX.filters.isAllFiltersChecked() || SCHEDFOX.filters.isNoFilterChecked()) {
 							//dont do hide any
 							return 'display:trable-row';
 						} else{
@@ -767,6 +767,10 @@ SCHEDFOX.filters = {
 	},
 	isAnyFilterChecked : function () {
 		return (this.user_filter_options.high || this.user_filter_options.med || this.user_filter_options.low) ;
+			
+	},
+	isNoFilterChecked : function () {
+		return (!this.user_filter_options.high && !this.user_filter_options.med && !this.user_filter_options.low) ;
 			
 	},
 	displayAllRows: function () {
