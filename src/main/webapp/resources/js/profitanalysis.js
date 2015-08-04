@@ -365,33 +365,44 @@ function dashboard(id, fData) {
 d3.select('#dfg').on(
 		'click',
 		function() {
+			var dateTo = $('#input-start-date').val();
+			if(! dateTo || dateTo === "") {
+				return;
+			}
+			var tmp = $('#input-end-date').val();
+			if(tmp && tmp !== "") {
+				toDate = tmp;
+			} else{
+				dateTo = dateTo ? dateTo : toDate;
+				var cv = new Date(dateTo);
+				cv.setDate(cv.getDate() - 21);
+				var startDate = cv.getFullYear() + "-"
+						+ ("0" + (cv.getMonth() + 1)).slice(-2) + "-"
+						+ ("0" + cv.getDate()).slice(-2);
+				dateFirst = startDate ? startDate : firstDate;
+				firstDate = dateFirst;
+				toDate = firstDate;
+			}
+			
 			$('#table2').hide();
 			$('#tableId').hide();
 			$('#locateHead').hide();
 			$('#branchHead').hide();
 			$('#dashboard').empty();
-			var dateTo = $('#fromdatepicker').datepicker({
-				dateFormat : 'yy-mm-dd'
-			}).val();
+			
+			$('div span#to').html(dateTo);
+			$('div span#from').html(toDate)
 
-			dateTo = dateTo ? dateTo : toDate;
-			var cv = new Date(dateTo);
-			cv.setDate(cv.getDate() - 21);
-			var startDate = cv.getFullYear() + "-"
-					+ ("0" + (cv.getMonth() + 1)).slice(-2) + "-"
-					+ ("0" + cv.getDate()).slice(-2);
-			dateFirst = startDate ? startDate : firstDate;
-			firstDate = dateFirst;
-			toDate = dateTo;
-
-			$('#fd').text(firstDate);
-			$('#tda').text(toDate);
-			d3.json("resources/js/sheet.json", function(error, data) {
-				var d = FormJsonData(data, dateFirst, dateTo);
-				if (d.length > 0) {
-					dashboard('#dashboard', d);
-				}
-
+			// ajax loader start
+			showProgress();
+			apiUrl = "profitanalysis?startDate=" + toDate + "&endDate=" + dateTo;
+			var jqxhr = $.getJSON(apiUrl, function(error, data) {
+			}).done(function(data) {
+				dashboard('#dashboard', data);
+			}).fail(function(error) {
+			}).always(function() {
+				// ajax loader stop
+				hideProgress();
 			});
 
 		});
@@ -808,6 +819,10 @@ SCHEDFOX.filters = {
 
 $(document).ready(function() {
 
+	//set start-date and end-date to DOM
+	$('div span#to').html(toDate);
+	$('div span#from').html(startDate);
+	
 	$('div.checkbox input').click(function(e) {
 
 		switch (this.value) {

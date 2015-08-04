@@ -15,10 +15,16 @@
 	<link href="${pageContext.request.contextPath}/resources/css/font-awesome.css" rel="stylesheet">
 	<link href="${pageContext.request.contextPath}/resources/css/style.css" rel="stylesheet">
 	<link href="${pageContext.request.contextPath}/resources/css/awesome-bootstrap-checkbox.css" rel="stylesheet">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap-datetimepicker.min.css" />
 	
 	<script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-1.11.3.min.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-ui.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/lib/d3/d3min.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/lib/moment/moment.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/bootstrap/js/transition.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/bootstrap/js/collapse.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -76,7 +82,6 @@
         </div>
  -->
         <div class="body">
-            <h2>Profit Analysis Report</h2>
             <decorator:body />
         </div>
 
