@@ -543,7 +543,18 @@ function drawTable(d) {
 								}
 							}
 							if(SCHEDFOX.filters.isLowAndMedSelected()){
-								if ((data.percentage * 100.0) > lowColor) {
+//								if ((data.percentage * 100.0) > lowColor) {
+//									return 'display:none';
+//								}
+								if ((data.percentage * 100.0) > highColor) {
+									//red color
+									return 'display:trable-row';
+								} else if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									//orange rows
+									return 'display:trable-row';
+								} else {
+									//green rows
 									return 'display:none';
 								}
 							}
