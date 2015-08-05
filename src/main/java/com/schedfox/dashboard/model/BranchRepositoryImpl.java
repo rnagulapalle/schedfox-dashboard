@@ -60,6 +60,8 @@ public class BranchRepositoryImpl implements BranchRepository {
         allDataQuery.append("SELECT client.branch_id, client.client_name, client.client_id, ");
         allDataQuery.append("SUM((COALESCE(paid_amount, 0)) / (greatest(COALESCE (bill_amount, 0), 1)) * 100) AS percent, ");
         allDataQuery.append("SUM(paid_amount) as paidamt, SUM(bill_amount) AS billamt, ");
+        allDataQuery.append("MIN(COALESCE(cli_bill_amount, emp_bill_amount)) as bill_rate, ");
+        allDataQuery.append("MIN(COALESCE(cli_pay_amount, emp_pay_amount)) as pay_rate, ");
         allDataQuery.append("employee_first_name || ' ' || employee_last_name as empname, employee.employee_id ");
         allDataQuery.append("FROM (SELECT DATE(date_trunc('week', doy)) AS my_date FROM champion_db.generate_date_series(?, ?) ");
         allDataQuery.append("GROUP BY DATE(date_trunc('week', doy)) ORDER BY DATE(date_trunc('week', doy))) as mydates ");
@@ -102,6 +104,10 @@ public class BranchRepositoryImpl implements BranchRepository {
                         empMetrics.setEmployeeName(currRatio.get("empname").toString());
                         empMetrics.setBillAmount(((BigDecimal) currRatio.get("billamt")));
                         empMetrics.setPaidAmount(((BigDecimal) currRatio.get("paidamt")));
+                        
+                        empMetrics.setBillHourlyRegular((BigDecimal)currRatio.get("bill_rate"));
+                        empMetrics.setPaidHourlyRegular((BigDecimal)currRatio.get("pay_rate"));
+                        
                         location.getEmployeeMetricsList().add(empMetrics);
                     }
                 }
