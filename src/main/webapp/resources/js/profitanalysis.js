@@ -168,10 +168,13 @@ function dashboard(id, fData) {
 		function mouseover(d) {
 			$('#table2').hide("slow");
 			$('#locateHead').hide("slow");
-			//before draw table reset filters
-			//SCHEDFOX.filters.resetFilters();
-			drawTable(d, firstDate, toDate);
-			LOCATION_ROWS = $('div#tableId table tr').not('thead tr');
+			// before draw table reset filters
+			// SCHEDFOX.filters.resetFilters();
+			drawTable('#tableId', d, firstDate, toDate);
+			//format the data for each location
+			employeeTabTable('#table3', d, firstDate, toDate);
+			//get location_rows of current active tab
+			LOCATION_ROWS = $('.filter-table table tr').not('thead tr');
 		}
 
 		function mouseout(d) { // utility function to be called on mouseout.
@@ -366,13 +369,13 @@ d3.select('#dfg').on(
 		'click',
 		function() {
 			var dateTo = $('#input-start-date').val();
-			if(! dateTo || dateTo === "") {
+			if (!dateTo || dateTo === "") {
 				return;
 			}
 			var tmp = $('#input-end-date').val();
-			if(tmp && tmp !== "") {
+			if (tmp && tmp !== "") {
 				toDate = tmp;
-			} else{
+			} else {
 				dateTo = dateTo ? dateTo : toDate;
 				var cv = new Date(dateTo);
 				cv.setDate(cv.getDate() - 21);
@@ -383,19 +386,20 @@ d3.select('#dfg').on(
 				firstDate = dateFirst;
 				toDate = firstDate;
 			}
-			
+
 			$('#table2').hide();
 			$('#tableId').hide();
 			$('#locateHead').hide();
 			$('#branchHead').hide();
 			$('#dashboard').empty();
-			
+
 			$('div span#to').html(dateTo);
 			$('div span#from').html(toDate)
 
 			// ajax loader start
 			showProgress();
-			apiUrl = "profitanalysis?startDate=" + toDate + "&endDate=" + dateTo;
+			apiUrl = "profitanalysis?startDate=" + toDate + "&endDate="
+					+ dateTo;
 			var jqxhr = $.getJSON(apiUrl, function(error, data) {
 			}).done(function(data) {
 				dashboard('#dashboard', data);
@@ -458,15 +462,15 @@ var jqxhr = $.getJSON(apiUrl, function(error, data) {
  *            d
  * @returns {undefined}
  */
-function drawTable(d) {
-	$('#tableId').show();
+function drawTable(tableId, d) {
+	$(tableId).show();
 	$('#branchHead').show();
-	$('#tableId').empty();
+	$(tableId).empty();
 	$('#branchHead').text('Profit analysis of - ' + d.branchName);
 
 	var columns = [ "location", "paid", "bill", "percent" ];
 
-	var table = d3.select("#tableId").append("table").attr("class",
+	var table = d3.select(tableId).append("table").attr("class",
 			"table table-bordered table-hover").attr("style",
 			"border-collapse:collapse;"), thead = table.append("thead"), tbody = table
 			.append("tbody");
@@ -483,83 +487,95 @@ function drawTable(d) {
 	});
 
 	// create a row for each object in the data
-	var rows = tbody.selectAll("tr").data(d.locations).enter().append("tr")
+	var rows = tbody
+			.selectAll("tr")
+			.data(d.locations)
+			.enter()
+			.append("tr")
 			.attr(
 					"class",
 					function(data) {
 						if ((data.percentage * 100.0) > highColor) {
-							//red color
+							// red color
 							return 'highRow';
 						} else if ((data.percentage * 100.0) < highColor
 								&& (data.percentage * 100.0) > lowColor) {
-							//orange rows
+							// orange rows
 							return 'mediumRow'
 						} else {
-							//green rows
+							// green rows
 							return 'lowRow';
 						}
-					}).attr('style', function(data) {
-						if(SCHEDFOX.filters.isAllFiltersChecked() || SCHEDFOX.filters.isNoFilterChecked()) {
-							//dont do hide any
+					})
+			.attr(
+					'style',
+					function(data) {
+						if (SCHEDFOX.filters.isAllFiltersChecked()
+								|| SCHEDFOX.filters.isNoFilterChecked()) {
+							// dont do hide any
 							return 'display:trable-row';
-						} else{
-							//check which one he is selected
-							//user wants to see high profit rows
-							if(SCHEDFOX.filters.isOnlyHighSelected()) {
-								//check this row is high profit row otherwise display none
-								if((data.percentage * 100.0) > highColor || (data.percentage * 100.0) < highColor
-								&& (data.percentage * 100.0) > lowColor) {
-									return 'display:none';
-								} 
-							}
-							//is only med selected, user wants to see only med rows
-							if(SCHEDFOX.filters.isOnlyMedSelected()) {
-								if ((data.percentage * 100.0) < highColor
-										&& (data.percentage * 100.0) > lowColor) {
-									return 'display:trable-row';
-								} else{
-									return 'display:none';
-								}
-							}
-							
-							//is only med selected, user wants to see only low profit rows
-							if(SCHEDFOX.filters.isOnlyLowSelected()) {
-								if ((data.percentage * 100.0) > highColor) {
-									return 'display:trable-row';
-								} else{
-									return 'display:none';
-								}
-							}
-							
-							if(SCHEDFOX.filters.isHighAndMedSelected()) {
-								if ((data.percentage * 100.0) > highColor) {
-									return 'display:none';
-								}
-							}
-							if(SCHEDFOX.filters.isHighAndLowSelected()) {
-								if ((data.percentage * 100.0) < highColor
+						} else {
+							// check which one he is selected
+							// user wants to see high profit rows
+							if (SCHEDFOX.filters.isOnlyHighSelected()) {
+								// check this row is high profit row otherwise
+								// display none
+								if ((data.percentage * 100.0) > highColor
+										|| (data.percentage * 100.0) < highColor
 										&& (data.percentage * 100.0) > lowColor) {
 									return 'display:none';
 								}
 							}
-							if(SCHEDFOX.filters.isLowAndMedSelected()){
-//								if ((data.percentage * 100.0) > lowColor) {
-//									return 'display:none';
-//								}
+							// is only med selected, user wants to see only med
+							// rows
+							if (SCHEDFOX.filters.isOnlyMedSelected()) {
+								if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									return 'display:trable-row';
+								} else {
+									return 'display:none';
+								}
+							}
+
+							// is only med selected, user wants to see only low
+							// profit rows
+							if (SCHEDFOX.filters.isOnlyLowSelected()) {
 								if ((data.percentage * 100.0) > highColor) {
-									//red color
+									return 'display:trable-row';
+								} else {
+									return 'display:none';
+								}
+							}
+
+							if (SCHEDFOX.filters.isHighAndMedSelected()) {
+								if ((data.percentage * 100.0) > highColor) {
+									return 'display:none';
+								}
+							}
+							if (SCHEDFOX.filters.isHighAndLowSelected()) {
+								if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									return 'display:none';
+								}
+							}
+							if (SCHEDFOX.filters.isLowAndMedSelected()) {
+								// if ((data.percentage * 100.0) > lowColor) {
+								// return 'display:none';
+								// }
+								if ((data.percentage * 100.0) > highColor) {
+									// red color
 									return 'display:trable-row';
 								} else if ((data.percentage * 100.0) < highColor
 										&& (data.percentage * 100.0) > lowColor) {
-									//orange rows
+									// orange rows
 									return 'display:trable-row';
 								} else {
-									//green rows
+									// green rows
 									return 'display:none';
 								}
 							}
 						}
-					});;
+					});
 
 	// create a cell in each row for each column
 	var cells = rows.selectAll("td").data(function(row) {
@@ -650,8 +666,152 @@ function employeeSubTable(locationData) {
 							return 'lowRow';
 						}
 					}).attr('style', function(data) {
-						console.log(data);
-					});
+				console.log(data);
+			});
+
+	// create a cell in each row for each column
+	var cells = rows.selectAll("td").data(function(row) {
+		return columns.map(function(column) {
+			if (column === 'name') {
+				return {
+					column : column,
+					value : row.employeeName,
+					data : row
+				};
+			} else if (column === 'paid') {
+				return {
+					column : column,
+					value : parseFloat(row.paidAmount).toFixed(2),
+					data : row
+				};
+			} else if (column === 'bill') {
+				return {
+					column : column,
+					value : parseFloat(row.billAmount).toFixed(2),
+					data : row
+				};
+			} else {
+				return {
+					column : column,
+					value : parseFloat(row.percentage * 100.0).toFixed(2),
+					data : row
+				};
+			}
+		});
+	}).enter().append("td").text(function(d) {
+		return d.value;
+	});
+
+}
+
+//employees tab table
+function employeeTabTable(tableId, d) {
+	//parse data
+	var empData = [];
+	d.locations.forEach(function(obj, i) { 
+		 obj.employeeMetricsList.forEach(function(emp) {
+			 empData.push(emp);
+		 });
+	});
+	
+	$(tableId).show();
+	$('#locateHead2').show();
+	$(tableId).empty();
+	$('#locateHead2').text('Employees Profit Analysis');
+
+	var columns = [ "name", "paid", "bill", "percent" ];
+	/* Draw Table */
+	var table = d3.select(tableId).append("table").attr("class",
+			"table table-hover table-bordered").attr("style",
+			"border-collapse:collapse;"), thead = table.append("thead"), tbody = table
+			.append("tbody");
+
+	// append the header row
+	thead.append("tr").selectAll("th").data(columns).enter().append("th").text(
+			function(column) {
+				return column;
+			});
+
+	// create a row for each object in the data
+	var rows = tbody.selectAll("tr").data(empData)
+			.enter().append("tr").attr(
+					"class",
+					function(data) {
+						if ((data.percentage * 100.0) > highColor) {
+							return 'highRow';
+						} else if ((data.percentage * 100.0) < highColor
+								&& (data.percentage * 100.0) > lowColor) {
+							return 'mediumRow'
+						} else {
+							return 'lowRow';
+						}
+					}).attr('style', function(data) {
+						if (SCHEDFOX.filters.isAllFiltersChecked()
+								|| SCHEDFOX.filters.isNoFilterChecked()) {
+							// dont do hide any
+							return 'display:trable-row';
+						} else {
+							// check which one he is selected
+							// user wants to see high profit rows
+							if (SCHEDFOX.filters.isOnlyHighSelected()) {
+								// check this row is high profit row otherwise
+								// display none
+								if ((data.percentage * 100.0) > highColor
+										|| (data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									return 'display:none';
+								}
+							}
+							// is only med selected, user wants to see only med
+							// rows
+							if (SCHEDFOX.filters.isOnlyMedSelected()) {
+								if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									return 'display:trable-row';
+								} else {
+									return 'display:none';
+								}
+							}
+
+							// is only med selected, user wants to see only low
+							// profit rows
+							if (SCHEDFOX.filters.isOnlyLowSelected()) {
+								if ((data.percentage * 100.0) > highColor) {
+									return 'display:trable-row';
+								} else {
+									return 'display:none';
+								}
+							}
+
+							if (SCHEDFOX.filters.isHighAndMedSelected()) {
+								if ((data.percentage * 100.0) > highColor) {
+									return 'display:none';
+								}
+							}
+							if (SCHEDFOX.filters.isHighAndLowSelected()) {
+								if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									return 'display:none';
+								}
+							}
+							if (SCHEDFOX.filters.isLowAndMedSelected()) {
+								// if ((data.percentage * 100.0) > lowColor) {
+								// return 'display:none';
+								// }
+								if ((data.percentage * 100.0) > highColor) {
+									// red color
+									return 'display:trable-row';
+								} else if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									// orange rows
+									return 'display:trable-row';
+								} else {
+									// green rows
+									return 'display:none';
+								}
+							}
+						}
+			});
 
 	// create a cell in each row for each column
 	var cells = rows.selectAll("td").data(function(row) {
@@ -722,105 +882,117 @@ SCHEDFOX.filters = {
 				this.user_filter_options.low = false;
 			}
 		}
-
+		
 		if (LOCATION_ROWS) {
-			
+
 			if (this.isAnyFilterChecked()) {
 				console.log('inside location rows checked');
-				if(this.isAllFiltersChecked()) {
+				if (this.isAllFiltersChecked()) {
 					this.displayAllRows();
 					return;
 				}
-				//handle user selects any one
-				if(this.user_filter_options.high && !this.user_filter_options.med && !this.user_filter_options.low) {
+				// handle user selects any one
+				if (this.user_filter_options.high
+						&& !this.user_filter_options.med
+						&& !this.user_filter_options.low) {
 					console.log('only high profit filter selected');
 					var lowRow = LOCATION_ROWS.filter('.lowRow').show();
 					LOCATION_ROWS.not(lowRow).hide('slow');
 					return;
 				}
-				if(this.user_filter_options.med && !this.user_filter_options.high && !this.user_filter_options.low) {
+				if (this.user_filter_options.med
+						&& !this.user_filter_options.high
+						&& !this.user_filter_options.low) {
 					console.log('only medium profit filter selected');
 					var mediumRow = LOCATION_ROWS.filter('.mediumRow').show();
 					LOCATION_ROWS.not(mediumRow).hide('slow');
 					return;
 				}
-				if(this.user_filter_options.low && !this.user_filter_options.med && !this.user_filter_options.high) {
+				if (this.user_filter_options.low
+						&& !this.user_filter_options.med
+						&& !this.user_filter_options.high) {
 					console.log('only low profit filter selected');
 					var highRow = LOCATION_ROWS.filter('.highRow').show();
 					LOCATION_ROWS.not(highRow).hide('slow');
 					return;
 				}
-				
-				//handle user selects any two filters
-				if(this.user_filter_options.high && this.user_filter_options.med && !this.user_filter_options.low) {
+
+				// handle user selects any two filters
+				if (this.user_filter_options.high
+						&& this.user_filter_options.med
+						&& !this.user_filter_options.low) {
 					console.log('user selected high and medium profit filters');
 					var lowRow = LOCATION_ROWS.filter('.lowRow').show();
 					LOCATION_ROWS.not(lowRow).hide('slow');
 					LOCATION_ROWS.filter('.mediumRow').show('slow');
 					return;
 				}
-				
-				if(this.user_filter_options.high && !this.user_filter_options.med && this.user_filter_options.low) {
+
+				if (this.user_filter_options.high
+						&& !this.user_filter_options.med
+						&& this.user_filter_options.low) {
 					console.log('user selected high and low profit filters');
 					var lowRow = LOCATION_ROWS.filter('.lowRow').show();
 					LOCATION_ROWS.not(lowRow).hide('slow');
 					LOCATION_ROWS.filter('.highRow').show('slow');
 					return;
 				}
-				
-				if(!this.user_filter_options.high && this.user_filter_options.med && this.user_filter_options.low) {
+
+				if (!this.user_filter_options.high
+						&& this.user_filter_options.med
+						&& this.user_filter_options.low) {
 					console.log('user selected med and low profit filters');
 					var highRow = LOCATION_ROWS.filter('.highRow').show();
 					LOCATION_ROWS.not(highRow).hide('slow');
 					LOCATION_ROWS.filter('.mediumRow').show('slow');
 					return;
 				}
-//				
+				//				
 			} else {
 				this.displayAllRows();
 				return;
 			}
-		
+
 		}// end of location_rows check
 
 	},
 	isAllFiltersChecked : function() {
-		return (this.user_filter_options.high && this.user_filter_options.med && this.user_filter_options.low); 
+		return (this.user_filter_options.high && this.user_filter_options.med && this.user_filter_options.low);
 	},
-	isAnyFilterChecked : function () {
-		return (this.user_filter_options.high || this.user_filter_options.med || this.user_filter_options.low) ;
-			
+	isAnyFilterChecked : function() {
+		return (this.user_filter_options.high || this.user_filter_options.med || this.user_filter_options.low);
+
 	},
-	isNoFilterChecked : function () {
-		return (!this.user_filter_options.high && !this.user_filter_options.med && !this.user_filter_options.low) ;
-			
+	isNoFilterChecked : function() {
+		return (!this.user_filter_options.high && !this.user_filter_options.med && !this.user_filter_options.low);
+
 	},
-	displayAllRows: function () {
+	displayAllRows : function() {
 		console.log('inside show all');
 		var highRow = LOCATION_ROWS.filter('.highRow').show('slow');
 		var highRow = LOCATION_ROWS.filter('.mediumRow').show('slow');
 		var highRow = LOCATION_ROWS.filter('.lowRow').show('slow');
 	},
-	isOnlyHighSelected: function () {
+	isOnlyHighSelected : function() {
 		return (this.user_filter_options.high && !this.user_filter_options.med && !this.user_filter_options.low);
-			
+
 	},
-	isOnlyMedSelected: function () {
+	isOnlyMedSelected : function() {
 		return (!this.user_filter_options.high && this.user_filter_options.med && !this.user_filter_options.low);
 	},
-	isOnlyLowSelected: function () {
+	isOnlyLowSelected : function() {
 		return (!this.user_filter_options.high && !this.user_filter_options.med && this.user_filter_options.low);
 	},
-	isHighAndMedSelected: function () {
+	isHighAndMedSelected : function() {
 		return (this.user_filter_options.high && this.user_filter_options.med && !this.user_filter_options.low);
 	},
-	isHighAndLowSelected: function () {
+	isHighAndLowSelected : function() {
 		return (this.user_filter_options.high && !this.user_filter_options.med && this.user_filter_options.low);
 	},
-	isLowAndMedSelected: function () {
+	isLowAndMedSelected : function() {
 		return (!this.user_filter_options.high && this.user_filter_options.med && this.user_filter_options.low);
 	},
-	resetFilters: function() {
+	resetFilters : function() {
 		$("input:checkbox").removeAttr('checked');
 		this.user_filter_options.high = false;
 		this.user_filter_options.low = false;
@@ -830,10 +1002,10 @@ SCHEDFOX.filters = {
 
 $(document).ready(function() {
 
-	//set start-date and end-date to DOM
+	// set start-date and end-date to DOM
 	$('div span#to').html(toDate);
 	$('div span#from').html(startDate);
-	
+
 	$('div.checkbox input').click(function(e) {
 
 		switch (this.value) {
@@ -861,6 +1033,12 @@ $(document).ready(function() {
 
 	$('#showAll').click(function() {
 		rows.show();
+	});
+
+	// tab content show dynamically
+	$("#profiAnalysisTab a").click(function(e) {
+		e.preventDefault();
+		$(this).tab('show');
 	});
 
 });
