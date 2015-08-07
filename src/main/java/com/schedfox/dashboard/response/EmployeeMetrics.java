@@ -17,6 +17,8 @@ public class EmployeeMetrics implements Serializable {
     private String employeeName;
     private BigDecimal paidAmount;
     private BigDecimal billAmount;
+    private BigDecimal paidHourlyRegular;
+    private BigDecimal billHourlyRegular;
 
     public String getEmployeeName() {
         return employeeName;
@@ -53,9 +55,37 @@ public class EmployeeMetrics implements Serializable {
 
     public BigDecimal getPercentage() {
         try {
-            return new BigDecimal(this.paidAmount.doubleValue() / this.billAmount.doubleValue());
+            return new BigDecimal(this.paidHourlyRegular.doubleValue() / this.billHourlyRegular.doubleValue());
         } catch (Exception exe) {
             return new BigDecimal(0);
         }
+    }
+
+    /**
+     * @return the paidHourlyRegular
+     */
+    public BigDecimal getPaidHourlyRegular() {
+        return paidHourlyRegular;
+    }
+
+    /**
+     * @param paidHourlyRegular the paidHourlyRegular to set
+     */
+    public void setPaidHourlyRegular(BigDecimal paidHourlyRegular) {
+        this.paidHourlyRegular = paidHourlyRegular;
+    }
+
+    /**
+     * @return the billHourlyRegular
+     */
+    public BigDecimal getBillHourlyRegular() {
+        return billHourlyRegular;
+    }
+
+    /**
+     * @param billHourlyRegular the billHourlyRegular to set
+     */
+    public void setBillHourlyRegular(BigDecimal billHourlyRegular) {
+        this.billHourlyRegular = billHourlyRegular;
     }
 }

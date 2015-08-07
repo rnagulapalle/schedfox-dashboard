@@ -8,7 +8,7 @@ var highColor = 68;
 var toDate = new Date();
 toDate = toDate.toISOString().substring(0, 10);
 var cv = new Date(toDate);
-cv.setDate(cv.getDate() - 21);
+cv.setDate(cv.getDate() - 7);
 var startDate = cv.getFullYear() + "-" + ("0" + (cv.getMonth() + 1)).slice(-2)
 		+ "-" + ("0" + cv.getDate()).slice(-2);
 
@@ -639,7 +639,7 @@ function employeeSubTable(locationData) {
 	$('#table2').empty();
 	$('#locateHead').text('Employees @ ' + locationData.locationName);
 
-	var columns = [ "name", "paid", "bill", "percent" ];
+	var columns = [ "name", "paid", "bill", "paid_rate", "bill_rate", "percent" ];
 	/* Draw Table */
 	var table = d3.select("#table2").append("table").attr("class",
 			"table table-hover table-bordered").attr("style",
@@ -832,6 +832,18 @@ function employeeTabTable(tableId, d) {
 				return {
 					column : column,
 					value : parseFloat(row.billAmount).toFixed(2),
+					data : row
+				};
+			} else if (column === 'paid_rate') {
+				return {
+					column : column,
+					value : parseFloat(row.paidHourlyRegular).toFixed(2),
+					data : row
+				};
+			} else if (column === 'bill_rate') {
+				return {
+					column : column,
+					value : parseFloat(row.billHourlyRegular).toFixed(2),
 					data : row
 				};
 			} else {
