@@ -639,7 +639,7 @@ function employeeSubTable(locationData) {
 	$('#table2').empty();
 	$('#locateHead').text('Employees @ ' + locationData.locationName);
 
-	var columns = [ "name", "paid", "bill", "paid_rate", "bill_rate", "percent" ];
+	var columns = [ "name", "paid", "bill", "paid-rate", "bill-rate", "percent" ];
 	/* Draw Table */
 	var table = d3.select("#table2").append("table").attr("class",
 			"table table-hover table-bordered").attr("style",
@@ -671,6 +671,8 @@ function employeeSubTable(locationData) {
 
 	// create a cell in each row for each column
 	var cells = rows.selectAll("td").data(function(row) {
+		console.log('row');
+		console.log(row);
 		return columns.map(function(column) {
 			if (column === 'name') {
 				return {
@@ -688,6 +690,18 @@ function employeeSubTable(locationData) {
 				return {
 					column : column,
 					value : parseFloat(row.billAmount).toFixed(2),
+					data : row
+				};
+			} else if (column === 'paid-rate') {
+				return {
+					column : column,
+					value : parseFloat(row.paidHourlyRegular).toFixed(2),
+					data : row
+				};
+			} else if (column === 'bill-rate') {
+				return {
+					column : column,
+					value : parseFloat(row.billHourlyRegular).toFixed(2),
 					data : row
 				};
 			} else {
@@ -719,7 +733,7 @@ function employeeTabTable(tableId, d) {
 	$(tableId).empty();
 	$('#locateHead2').text('Employees Profit Analysis');
 
-	var columns = [ "name", "paid", "bill", "percent" ];
+	var columns = [ "name", "paid", "bill", "paid-rate", "bill-rate", "percent" ];
 	/* Draw Table */
 	var table = d3.select(tableId).append("table").attr("class",
 			"table table-hover table-bordered").attr("style",
@@ -834,13 +848,13 @@ function employeeTabTable(tableId, d) {
 					value : parseFloat(row.billAmount).toFixed(2),
 					data : row
 				};
-			} else if (column === 'paid_rate') {
+			} else if (column === 'paid-rate') {
 				return {
 					column : column,
 					value : parseFloat(row.paidHourlyRegular).toFixed(2),
 					data : row
 				};
-			} else if (column === 'bill_rate') {
+			} else if (column === 'bill-rate') {
 				return {
 					column : column,
 					value : parseFloat(row.billHourlyRegular).toFixed(2),
