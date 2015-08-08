@@ -91,7 +91,7 @@
 		<div class="col-lg-6 col-sm-6 col-xs-6">
 
 			<fieldset>
-				<legend>Choose profit type to filter out location table </legend>
+				<legend>Choose profit type to filter out data </legend>
 
 				<div class="checkbox checkbox-success checkbox-inline">
 					<input type="checkbox" class="styled" id="inlineCheckbox1"
