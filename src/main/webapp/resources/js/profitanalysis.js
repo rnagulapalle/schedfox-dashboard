@@ -666,13 +666,11 @@ function employeeSubTable(locationData) {
 							return 'lowRow';
 						}
 					}).attr('style', function(data) {
-				console.log(data);
+				//console.log(data);
 			});
 
 	// create a cell in each row for each column
 	var cells = rows.selectAll("td").data(function(row) {
-		console.log('row');
-		console.log(row);
 		return columns.map(function(column) {
 			if (column === 'name') {
 				return {
@@ -724,6 +722,7 @@ function employeeTabTable(tableId, d) {
 	var empData = [];
 	d.locations.forEach(function(obj, i) { 
 		 obj.employeeMetricsList.forEach(function(emp) {
+			 emp.locationName = obj.locationName;
 			 empData.push(emp);
 		 });
 	});
@@ -733,7 +732,7 @@ function employeeTabTable(tableId, d) {
 	$(tableId).empty();
 	$('#locateHead2').text('Employees Profit Analysis');
 
-	var columns = [ "name", "paid", "bill", "paid-rate", "bill-rate", "percent" ];
+	var columns = [ "name", "location", "paid", "bill", "paid-rate", "bill-rate", "percent" ];
 	/* Draw Table */
 	var table = d3.select(tableId).append("table").attr("class",
 			"table table-hover table-bordered").attr("style",
@@ -741,7 +740,14 @@ function employeeTabTable(tableId, d) {
 			.append("tbody");
 
 	// append the header row
-	thead.append("tr").selectAll("th").data(columns).enter().append("th").text(
+	thead.append("tr").selectAll("th").data(columns).enter().append("th").attr(
+			"class", function(data) {
+				if (data === "location") {
+					return "col-xs-5 col-sm-2 col-lg-3";
+				} else {
+					return "col-xs-4 col-sm-2 col-lg-3";
+				}
+			}).text(
 			function(column) {
 				return column;
 			});
@@ -829,6 +835,7 @@ function employeeTabTable(tableId, d) {
 
 	// create a cell in each row for each column
 	var cells = rows.selectAll("td").data(function(row) {
+		console.log(row);
 		return columns.map(function(column) {
 			if (column === 'name') {
 				return {
@@ -836,7 +843,14 @@ function employeeTabTable(tableId, d) {
 					value : row.employeeName,
 					data : row
 				};
-			} else if (column === 'paid') {
+			} else if(column === 'location'){
+				return {
+					column : column,
+					value : row.locationName,
+					data : row
+				};
+			} 
+			else if (column === 'paid') {
 				return {
 					column : column,
 					value : parseFloat(row.paidAmount).toFixed(2),
