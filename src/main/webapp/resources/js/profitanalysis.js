@@ -1,19 +1,14 @@
 var firstDate = "";
-var toDate = "";
 var lName;
 
 var lowColor = 64;
 var highColor = 68;
 
-var toDate = new Date();
-toDate = toDate.toISOString().substring(0, 10);
-var cv = new Date(toDate);
-cv.setDate(cv.getDate() - 7);
-var startDate = cv.getFullYear() + "-" + ("0" + (cv.getMonth() + 1)).slice(-2)
-		+ "-" + ("0" + cv.getDate()).slice(-2);
+
+var startDate = getMonday(new Date()).toISOString().substring(0, 10);
+var toDate = getSunday(new Date()).toISOString().substring(0, 10);
 
 firstDate = startDate;
-toDate = toDate;
 
 var apiUrl = "profitanalysis?startDate=" + startDate + "&endDate=" + toDate;
 
@@ -25,6 +20,21 @@ function showProgress() {
 		spinnerVisible = true;
 	}
 };
+
+function getMonday(d) {
+  d = new Date(d);
+  var day = d.getDay(),
+      diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+  return new Date(d.setDate(diff));
+}
+
+function getSunday(d) {
+   d = getMonday(d);
+   var day = d.getDay(),
+      diff = d.getDate() +6;
+   return new Date(d.setDate(diff));
+}
+
 function hideProgress() {
 	if (spinnerVisible) {
 		var spinner = $("div#spinner");
