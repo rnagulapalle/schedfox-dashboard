@@ -19,6 +19,8 @@ public class EmployeeMetrics implements Serializable {
     private BigDecimal billAmount;
     private BigDecimal paidHourlyRegular;
     private BigDecimal billHourlyRegular;
+    
+    private String rateCodeStr;
 
     public String getEmployeeName() {
         return employeeName;
@@ -87,5 +89,19 @@ public class EmployeeMetrics implements Serializable {
      */
     public void setBillHourlyRegular(BigDecimal billHourlyRegular) {
         this.billHourlyRegular = billHourlyRegular;
+    }
+
+    /**
+     * @return the rateCodeStr
+     */
+    public String getRateCodeStr() {
+        return rateCodeStr;
+    }
+
+    /**
+     * @param rateCodeStr the rateCodeStr to set
+     */
+    public void setRateCodeStr(String rateCodeStr) {
+        this.rateCodeStr = rateCodeStr;
     }
 }

@@ -649,7 +649,7 @@ function employeeSubTable(locationData) {
 	$('#table2').empty();
 	$('#locateHead').text('Employees @ ' + locationData.locationName);
 
-	var columns = [ "name", "paid", "bill", "paid-rate", "bill-rate", "percent" ];
+	var columns = [ "name", "paid", "bill", "paid-rate", "rate", "bill-rate", "percent" ];
 	/* Draw Table */
 	var table = d3.select("#table2").append("table").attr("class",
 			"table table-hover table-bordered").attr("style",
@@ -688,6 +688,12 @@ function employeeSubTable(locationData) {
 					value : row.employeeName,
 					data : row
 				};
+                        } else if (column == 'rate') {
+                                return {
+                                        column : column,
+                                        value : row.rateCodeStr,
+                                        data : row
+                                }
 			} else if (column === 'paid') {
 				return {
 					column : column,
@@ -742,7 +748,7 @@ function employeeTabTable(tableId, d) {
 	$(tableId).empty();
 	$('#locateHead2').text('Employees Profit Analysis');
 
-	var columns = [ "name", "location", "paid", "bill", "paid-rate", "bill-rate", "percent" ];
+	var columns = [ "name", "location", "paid", "bill", "rate", "paid-rate", "bill-rate", "percent" ];
 	/* Draw Table */
 	var table = d3.select(tableId).append("table").attr("class",
 			"table table-hover table-bordered").attr("style",
@@ -853,6 +859,12 @@ function employeeTabTable(tableId, d) {
 					value : row.employeeName,
 					data : row
 				};
+                        } else if (column == 'rate') {
+                                return {
+                                        column : column,
+                                        value : row.rateCodeStr,
+                                        data : row
+                                }
 			} else if(column === 'location'){
 				return {
 					column : column,

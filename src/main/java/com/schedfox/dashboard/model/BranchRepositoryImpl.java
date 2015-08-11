@@ -57,11 +57,11 @@ public class BranchRepositoryImpl implements BranchRepository {
 
         StringBuilder allDataQuery = new StringBuilder();
         allDataQuery.append("SELECT * FROM ( ");
-        allDataQuery.append("SELECT client.branch_id, client.client_name, client.client_id, ");
+        allDataQuery.append("SELECT client.branch_id, client.client_name, client.client_id, rate_code_name, ");
         allDataQuery.append("SUM((COALESCE(paid_amount, 0)) / (greatest(COALESCE (bill_amount, 0), 1)) * 100) AS percent, ");
         allDataQuery.append("SUM(paid_amount) as paidamt, SUM(bill_amount) AS billamt, ");
         allDataQuery.append("MIN(COALESCE(cli_bill_amount, emp_bill_amount)) as bill_rate, ");
-        allDataQuery.append("MIN(COALESCE(cli_pay_amount, emp_pay_amount)) as pay_rate, ");
+        allDataQuery.append("MIN(COALESCE(emp_pay_amount, cli_pay_amount)) as pay_rate, ");
         allDataQuery.append("employee_first_name || ' ' || employee_last_name as empname, employee.employee_id ");
         allDataQuery.append("FROM (SELECT DATE(date_trunc('week', doy)) AS my_date FROM champion_db.generate_date_series(?, ?) ");
         allDataQuery.append("GROUP BY DATE(date_trunc('week', doy)) ORDER BY DATE(date_trunc('week', doy))) as mydates ");
@@ -69,7 +69,7 @@ public class BranchRepositoryImpl implements BranchRepository {
         allDataQuery.append("LEFT JOIN champion_db.get_client_pay_amounts(?, ?, -1, null\\:\\:integer[]) AS amt ");
         allDataQuery.append("   ON amt.week_started = mydates.my_date AND client.client_id = cid ");
         allDataQuery.append("LEFT JOIN champion_db.employee ON employee.employee_id = amt.eid ");
-        allDataQuery.append("GROUP BY client.branch_id, client.client_name, client.client_id, employee_first_name || ' ' || employee_last_name, employee.employee_id) a ");
+        allDataQuery.append("GROUP BY client.branch_id, client.client_name, client.client_id, employee_first_name || ' ' || employee_last_name, employee.employee_id, rate_code_name) a ");
         allDataQuery.append("WHERE ");
         allDataQuery.append("a.paidamt != 0.00 or a.paidamt is not null or a.billamt != 0.00 or a.billamt is not null");
         SQLQuery sqlQuery = getSession().createSQLQuery(allDataQuery.toString());
@@ -104,7 +104,7 @@ public class BranchRepositoryImpl implements BranchRepository {
                         empMetrics.setEmployeeName(currRatio.get("empname").toString());
                         empMetrics.setBillAmount(((BigDecimal) currRatio.get("billamt")));
                         empMetrics.setPaidAmount(((BigDecimal) currRatio.get("paidamt")));
-                        
+                        empMetrics.setRateCodeStr((String)currRatio.get("rate_code_name"));
                         empMetrics.setBillHourlyRegular((BigDecimal)currRatio.get("bill_rate"));
                         empMetrics.setPaidHourlyRegular((BigDecimal)currRatio.get("pay_rate"));
                         
