@@ -160,7 +160,7 @@ function dashboard(id, fData) {
 						return colorred(i % 1);
 				})
 
-		.on("mouseover", mouseover)// mouseover is defined below.
+		.on("click", mouseclick)// mouseover is defined below.
 		.on("mouseout", mouseout);// mouseout is defined below.
 
 		// Create the frequency labels above the rectangles.
@@ -175,7 +175,7 @@ function dashboard(id, fData) {
 			return y(d.percent) - 5;
 		}).attr("text-anchor", "middle");
 
-		function mouseover(d) {
+		function mouseclick(d) {
 			$('#table2').hide("slow");
 			$('#locateHead').hide("slow");
 			// before draw table reset filters
@@ -667,6 +667,7 @@ function employeeSubTable(locationData) {
 			.enter().append("tr").attr(
 					"class",
 					function(data) {
+						
 						if ((data.percentage * 100.0) > highColor) {
 							return 'highRow';
 						} else if ((data.percentage * 100.0) < highColor
@@ -773,7 +774,10 @@ function employeeTabTable(tableId, d) {
 			.enter().append("tr").attr(
 					"class",
 					function(data) {
-						if ((data.percentage * 100.0) > highColor) {
+						//hide anything percentage is 0
+						if(+(data.percentage * 100.0) === 0){
+							return 'hide';
+						} else if ((data.percentage * 100.0) > highColor) {
 							return 'highRow';
 						} else if ((data.percentage * 100.0) < highColor
 								&& (data.percentage * 100.0) > lowColor) {
@@ -781,7 +785,8 @@ function employeeTabTable(tableId, d) {
 						} else {
 							return 'lowRow';
 						}
-					}).attr('style', function(data) {
+					}).
+					attr('style', function(data) {
 						if (SCHEDFOX.filters.isAllFiltersChecked()
 								|| SCHEDFOX.filters.isNoFilterChecked()) {
 							// dont do hide any
@@ -851,7 +856,6 @@ function employeeTabTable(tableId, d) {
 
 	// create a cell in each row for each column
 	var cells = rows.selectAll("td").data(function(row) {
-		console.log(row);
 		return columns.map(function(column) {
 			if (column === 'name') {
 				return {
