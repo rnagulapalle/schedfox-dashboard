@@ -17,10 +17,26 @@
 	<link href="${pageContext.request.contextPath}/resources/css/awesome-bootstrap-checkbox.css" rel="stylesheet">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap-datetimepicker.min.css" />
 	
+	<!-- jsslider styles -->
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/jsslider//jslider.css" type="text/css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/jsslider//jslider.blue.css" type="text/css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/jsslider//jslider.plastic.css" type="text/css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/jsslider//jslider.round.css" type="text/css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/jsslider//jslider.round.plastic.css" type="text/css">
+	
 	<script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-1.11.3.min.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/lib/jquery/jquery-ui.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/lib/d3/d3min.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/lib/moment/moment.js"></script>
+	
+	<!-- jsslider js files -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/jsslider/jshashtable-2.1_src.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/jsslider/jquery.numberformatter-1.2.3.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/jsslider/tmpl.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/jsslider/jquery.dependClass-0.1.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/jsslider/draggable-0.1.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/jsslider/jquery.slider.js"></script>
+	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/bootstrap/js/transition.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/bootstrap/js/collapse.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/lib/bootstrap/js/bootstrap.min.js"></script>

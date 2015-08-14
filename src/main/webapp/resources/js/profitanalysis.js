@@ -179,7 +179,8 @@ function dashboard(id, fData) {
 			$('#table2').hide("slow");
 			$('#locateHead').hide("slow");
 			// before draw table reset filters
-			// SCHEDFOX.filters.resetFilters();
+			//populate table with client data
+			SCHEDFOX.form.enableMaxPercentageForm(d.locations, '#new-max-percentage-form');
 			drawTable('#tableId', d, firstDate, toDate);
 			//format the data for each location
 			employeeTabTable('#table3', d, firstDate, toDate);
@@ -473,6 +474,7 @@ var jqxhr = $.getJSON(apiUrl, function(error, data) {
  * @returns {undefined}
  */
 function drawTable(tableId, d) {
+	//draw table
 	$(tableId).show();
 	$('#branchHead').show();
 	$(tableId).empty();
@@ -502,6 +504,7 @@ function drawTable(tableId, d) {
 			.data(d.locations)
 			.enter()
 			.append("tr")
+			.attr("id", function(data) {return data.locationId;})
 			.attr(
 					"class",
 					function(data) {
@@ -1066,8 +1069,55 @@ SCHEDFOX.filters = {
 	}
 };
 
+SCHEDFOX.form = {
+	enableMaxPercentageForm : function(data, el) {
+	
+		//update selection
+		var $select = $(el).find('select.client-select-control');
+		$select.empty().append('<option value="">---Select Account---</option>');
+		data.forEach(function(obj, i) {
+			if((obj.percentage * 100) > highColor) {
+				var o = $('<option/>', { value: obj.locationId })
+		        .text(obj.locationName)
+		        .prop('selected', i == 0);
+				o.appendTo($select);
+			}
+		});
+		//enable refresh button
+		$(el).find('button#new-max').removeClass('disabled');
+	},
+	submitMaxPercentageForm: function(el, callback) {
+		console.log('inside submission of form!');
+		var account = $(el).find('select.client-select-control').val();
+		var new_max_percentage = $(el).find('input#new-max-percentage').val();
+		console.log(account + " : " +new_max_percentage);
+		if(!account || +account === 0 ) {
+			//dont do anything
+			console.log('no value selected');
+			return;
+		}
+		//ajax new percentage and on success call callback
+		callback(null, account);
+	}
+};
+
 $(document).ready(function() {
 
+	//set the slider
+	jQuery("#new-max-percentage").slider({
+		from : 0,
+		to : 100,
+		round : 1,
+		step : 1,
+		format : {
+			format : '##.0',
+			locale : 'us'
+		},
+		scale : [ 0, '|', 25, '|', '50', '|', 75, '|', 100, ],
+		dimension : '&nbsp;%',
+		skin : "round"
+	});
+	
 	// set start-date and end-date to DOM
 	$('div span#to').html(toDate);
 	$('div span#from').html(startDate);
@@ -1107,4 +1157,15 @@ $(document).ready(function() {
 		$(this).tab('show');
 	});
 
+	$('button#new-max').click(function(e) {
+		e.preventDefault();
+		SCHEDFOX.form.submitMaxPercentageForm('#new-max-percentage-form', function(err, rowId){
+			if(err){
+				console.log('Error occupred while saving data!');
+			}
+			//refresh the account table
+			$('tr#'+rowId).removeClass('highRow');
+			$('tr#'+rowId).addClass('lowRow');
+		});
+	})
 });

@@ -43,6 +43,7 @@
 			</div>
 			<script type="text/javascript">
 				$(function() {
+					
 					var d = new Date();
 
 					var month = d.getMonth() + 1;
@@ -128,7 +129,8 @@
 		</div>
 		<div class="col-lg-12">
 			<ul class="nav nav-tabs" id="profiAnalysisTab">
-				<li class="active"><a href="#sectionA">Profit analysis by location</a></li>
+				<li class="active"><a href="#sectionA">Profit analysis by
+						location</a></li>
 				<li><a href="#sectionB">Profit analysis by employee</a></li>
 			</ul>
 		</div>
@@ -138,6 +140,30 @@
 				<div id="sectionA" class="tabledets tab-pane fade in active">
 					<!--<h3 class="col-lg-12 col-sm-12 col-xs-12 p-0 text-center">Branch 1</h3>-->
 					<div class="col-lg-12 col-sm-12 col-xs-12">
+						<div class="col-lg-12 col-sm-12 col-xs-12 pull-left">
+							<form id="new-max-percentage-form">
+								<fieldset>
+									<legend>Set default max percentage for an account</legend>
+									<div class="form-group">
+										<label for="exampleInputEmail1">Select a location</label> 
+										<select
+											class="form-control client-select-control">
+											<option>---Select Account---</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="exampleInputPassword1">New max percentage</label>
+										<div class="layout-slider">
+											<input id="new-max-percentage" type="slider" name="price"
+												value="0" />
+										</div>
+									</div>
+
+									<button id="new-max" class="btn btn-success disabled">Refresh
+										Data</button>
+								</fieldset>
+							</form>
+						</div>
 						<div class="table-responsive">
 							<h3 id="branchHead"></h3>
 							<div id="tableId" class="filter-table"></div>

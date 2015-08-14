@@ -323,6 +323,21 @@ h2,h3{
 }
 
 
+.layout {
+	padding: 50px;
+	font-family: Georgia, serif;
+}
+
+.layout-slider {
+	margin-bottom: 60px;
+	width: 50%;
+	margin-top: 15px;
+}
+
+div.form-group select.client-select-control {
+	width: 50%;
+}
+
 
 
 
