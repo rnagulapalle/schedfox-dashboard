@@ -12,11 +12,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.schedfox.dashboard.domain.MaxPercentage;
 import com.schedfox.dashboard.response.ProfitAnalysisResponse;
 import com.schedfox.dashboard.service.ProfitAnalysisService;
 
@@ -54,7 +56,7 @@ public class HomeController {
      */
     @RequestMapping(method = RequestMethod.GET, value = "/profitanalysis", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<?> test(@RequestParam(value = "startDate")
+    ResponseEntity<?> getChartData(@RequestParam(value = "startDate")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
             @RequestParam(value = "endDate", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
@@ -67,6 +69,19 @@ public class HomeController {
             profitAnalysisResponse = profitAnalysisService.getProfitAnaylsisData(startDate, endDate1);
         }
         return new ResponseEntity<List>(profitAnalysisResponse, HttpStatus.OK);
+    }
+    
+    /**
+     *this method updates default percentage to new percentage
+     * @param maxpercentage
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/maxpercentage", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    ResponseEntity<?> updateNewMaxPercetageForAccount(@RequestBody MaxPercentage maxpercentage) {
+        logger.info("updating new max percentage");
+        logger.info(maxpercentage.toString());
+        return new ResponseEntity<String>("Successfully updated.", HttpStatus.OK);
     }
 
     /**

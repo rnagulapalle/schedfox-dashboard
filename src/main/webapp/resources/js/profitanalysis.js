@@ -11,7 +11,7 @@ var toDate = getSunday(new Date()).toISOString().substring(0, 10);
 firstDate = startDate;
 
 var apiUrl = "profitanalysis?startDate=" + startDate + "&endDate=" + toDate;
-
+var postPercentage = "maxpercentage";
 // ajax loader functions
 var spinnerVisible = false;
 function showProgress() {
@@ -1097,7 +1097,24 @@ SCHEDFOX.form = {
 			return;
 		}
 		//ajax new percentage and on success call callback
-		callback(null, account);
+		var request = {};
+		request.accountId = account;
+		request.percentage = new_max_percentage;
+		
+		$.ajax({
+			  type: 'POST',
+			  url: "http://localhost.paypal.com:8080/schedfox-dashboard/maxpercentage",
+			  data: JSON.stringify(request),
+			  error: function(e) {
+				  callback(e);
+			  },
+			  success: function(res) {
+				  callback(null, account);
+			  },
+			  dataType: "json",
+			  contentType: "application/json"
+			});
+		
 	}
 };
 
