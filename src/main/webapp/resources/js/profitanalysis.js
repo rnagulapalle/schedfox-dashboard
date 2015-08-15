@@ -1100,21 +1100,25 @@ SCHEDFOX.form = {
 		var request = {};
 		request.accountId = account;
 		request.percentage = new_max_percentage;
-		
+		request.type = 'account';
+	
 		$.ajax({
 			  type: 'POST',
-			  url: "http://localhost.paypal.com:8080/schedfox-dashboard/maxpercentage",
+			  url: postPercentage,
 			  data: JSON.stringify(request),
 			  error: function(e) {
-				  callback(e);
+				  if(e && e.status === 200) {
+					  callback(null, account);
+				  } else{
+					  callback(e);
+				  }
 			  },
 			  success: function(res) {
 				  callback(null, account);
 			  },
 			  dataType: "json",
-			  contentType: "application/json"
-			});
-		
+			  contentType: "application/json; charset=utf-8"
+			});		
 	}
 };
 
@@ -1178,8 +1182,10 @@ $(document).ready(function() {
 		e.preventDefault();
 		SCHEDFOX.form.submitMaxPercentageForm('#new-max-percentage-form', function(err, rowId){
 			if(err){
-				console.log('Error occupred while saving data!');
+				console.log('Error occured while saving data!');
+				return ;
 			}
+			console.log('success!');
 			//refresh the account table
 			$('tr#'+rowId).removeClass('highRow');
 			$('tr#'+rowId).addClass('lowRow');
