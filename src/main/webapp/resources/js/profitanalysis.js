@@ -1071,7 +1071,6 @@ SCHEDFOX.filters = {
 
 SCHEDFOX.form = {
 	enableMaxPercentageForm : function(data, el) {
-	
 		//update selection
 		var $select = $(el).find('select.client-select-control');
 		$select.empty().append('<option value="">---Select Account---</option>');
@@ -1079,10 +1078,12 @@ SCHEDFOX.form = {
 			if((obj.percentage * 100) > highColor) {
 				var o = $('<option/>', { value: obj.locationId })
 		        .text(obj.locationName)
+		        .attr('data', parseFloat(obj.percentage * 100.0).toFixed(2))
 		        .prop('selected', i == 0);
 				o.appendTo($select);
 			}
 		});
+		
 		//enable refresh button
 		$(el).find('button#new-max').removeClass('disabled');
 	},
@@ -1092,7 +1093,7 @@ SCHEDFOX.form = {
 		var new_max_percentage = $(el).find('input#new-max-percentage').val();
 		console.log(account + " : " +new_max_percentage);
 		if(!account || +account === 0 ) {
-			//dont do anything
+			//don't do anything
 			console.log('no value selected');
 			return;
 		}
@@ -1119,6 +1120,9 @@ SCHEDFOX.form = {
 			  dataType: "json",
 			  contentType: "application/json; charset=utf-8"
 			});		
+	},
+	onSelectChange : function(el) {
+		$("#new-max-percentage").slider("value", 10);
 	}
 };
 
@@ -1191,4 +1195,9 @@ $(document).ready(function() {
 			$('tr#'+rowId).addClass('lowRow');
 		});
 	})
+	
+	$("select#client-select-control").change(function() {
+		var option = $('option:selected', this).attr('data');
+		$("#new-max-percentage").slider('value', option);
+	});
 });

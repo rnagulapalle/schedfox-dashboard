@@ -147,7 +147,7 @@
 									<div class="form-group">
 										<label for="exampleInputEmail1">Select a location</label> 
 										<select
-											class="form-control client-select-control">
+											class="form-control client-select-control" id="client-select-control">
 											<option>---Select Account---</option>
 										</select>
 									</div>
