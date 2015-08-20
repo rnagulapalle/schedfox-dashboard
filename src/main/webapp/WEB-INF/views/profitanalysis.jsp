@@ -143,12 +143,12 @@
 						<div class="col-lg-12 col-sm-12 col-xs-12 pull-left">
 							<form id="new-max-percentage-form">
 								<fieldset>
-									<legend>Set default max percentage for an account</legend>
+									<legend>Max Percentage Form</legend>
 									<div class="form-group">
-										<label for="exampleInputEmail1">Select a location</label> 
+										<label for="exampleInputEmail1">Select an employee</label> 
 										<select
 											class="form-control client-select-control" id="client-select-control">
-											<option>---Select Account---</option>
+											<option>---Select an employee---</option>
 										</select>
 									</div>
 									<div class="form-group">

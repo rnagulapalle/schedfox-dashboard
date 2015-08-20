@@ -101,6 +101,8 @@ public class BranchRepositoryImpl implements BranchRepository {
                         }
 
                         EmployeeMetrics empMetrics = new EmployeeMetrics();
+                        
+                        empMetrics.setEmployeeId(((Integer) currRatio.get("employee_id")));
                         empMetrics.setEmployeeName(currRatio.get("empname").toString());
                         empMetrics.setBillAmount(((BigDecimal) currRatio.get("billamt")));
                         empMetrics.setPaidAmount(((BigDecimal) currRatio.get("paidamt")));

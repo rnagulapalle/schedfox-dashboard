@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.schedfox.dashboard.bootstrapper.util.DashboardConstants;
 import com.schedfox.dashboard.bootstrapper.util.DashboardConstants.MaxPercentageType;
+import com.schedfox.dashboard.domain.ClientEmployeeBillAlertExemption;
 import com.schedfox.dashboard.domain.MaxPercentage;
 import com.schedfox.dashboard.response.ProfitAnalysisResponse;
 import com.schedfox.dashboard.service.ProfitAnalysisService;
@@ -83,7 +84,17 @@ public class HomeController {
 	@ResponseBody
 	ResponseEntity<?> updateNewMaxPercetageForAccount(@RequestBody MaxPercentage maxpercentage) {
 		logger.info("updating new max percentage");
+		if(maxpercentage == null) {
+			return new ResponseEntity<String>("Invalid data found in the request : " , HttpStatus.BAD_REQUEST);
+		}
 		logger.info(maxpercentage.toString());
+		ClientEmployeeBillAlertExemption clientEmployeeBillAlertExemption =  new ClientEmployeeBillAlertExemption();
+		clientEmployeeBillAlertExemption.setClientId((int)maxpercentage.getAccountId());
+		clientEmployeeBillAlertExemption.setEmpoyeeId((int)maxpercentage.getEmployeeId());
+		clientEmployeeBillAlertExemption.setExemptAmount((int)maxpercentage.getPercentage());
+		
+		profitAnalysisService.saveclientEmployeeBillAlertExemption(clientEmployeeBillAlertExemption);
+		// TODO: confirm whether we can set exempt at client level for all employees otherwise remove below code.
 		// TODO: implement this method to set percentage for account or employee
 		// handle error
 		String requestType = maxpercentage.getType();
@@ -105,6 +116,7 @@ public class HomeController {
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<String>("Illegal argument Invalid Type: " + requestType, HttpStatus.BAD_REQUEST);
 		}
+		
 		return new ResponseEntity<String>("Successfully updated.", HttpStatus.OK);
 	}
 

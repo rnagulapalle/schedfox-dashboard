@@ -14,6 +14,7 @@ public class MaxPercentage implements Serializable {
 	private long accountId;
 	private double percentage;
 	private String type;
+	private long employeeId;
 	
 	public long getAccountId() {
 		return accountId;
@@ -28,14 +29,22 @@ public class MaxPercentage implements Serializable {
 		this.percentage = percentage;
 	}
 	
-	@Override
-    public String toString() {
-        return "MaxPercentage [accountId=" + accountId + ", percentage=" + percentage + ", type = " + type + "]";
-    }
+	
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	@Override
+    public String toString() {
+        return "MaxPercentage [accountId=" + accountId + ", percentage=" + percentage + ", type = " + type + " , employeeId = " + employeeId +"]";
+    }
+	public long getEmployeeId() {
+		return employeeId;
+	}
+	public void setEmployeeId(long employeeId) {
+		this.employeeId = employeeId;
 	}
 }

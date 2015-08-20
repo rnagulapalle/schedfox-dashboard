@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.schedfox.dashboard.domain.Branch;
+import com.schedfox.dashboard.domain.ClientEmployeeBillAlertExemption;
 import com.schedfox.dashboard.model.BranchRepository;
+import com.schedfox.dashboard.model.ClientEmployeeBillAlertExemptionRepository;
 import com.schedfox.dashboard.response.Location;
 import com.schedfox.dashboard.response.ProfitAnalysisResponse;
 
@@ -29,6 +31,9 @@ public class ProfitAnalysisService {
 	private static final Logger logger = LoggerFactory.getLogger(ProfitAnalysisService.class);
 	@Autowired
 	BranchRepository branchRepo;
+	
+	@Autowired
+	ClientEmployeeBillAlertExemptionRepository clientEmployeeBillAlertExemptionRepository;
 
 	/**
 	 * this method should get all branches and its metrics paid amount, bill
@@ -71,9 +76,19 @@ public class ProfitAnalysisService {
 			}
 
 		}
-
-		profitAnalysislist.get(2).getLocations().get(3).getBillAmount();
+		if(profitAnalysislist.size() > 2) {
+			profitAnalysislist.get(2).getLocations().get(3).getBillAmount();
+		}
 
 		return profitAnalysislist;
+	}
+	
+	@Transactional
+	public void saveclientEmployeeBillAlertExemption(ClientEmployeeBillAlertExemption clientEmployeeBillAlertExemption) {
+		
+		logger.info("inside saveclientEmployeeBillAlertExemption mthod in service");
+		
+		clientEmployeeBillAlertExemptionRepository.saveOrUpdate(clientEmployeeBillAlertExemption);
+		
 	}
 }
