@@ -23,10 +23,10 @@ function showProgress() {
 function getMonday(d) {
 	d = new Date(d);
 	var day = d.getDay(), diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust
-																			// when
-																			// day
-																			// is
-																			// sunday
+	// when
+	// day
+	// is
+	// sunday
 	return new Date(d.setDate(diff));
 }
 
@@ -651,7 +651,6 @@ function removeData(tabledata) {
 function employeeSubTable(locationData) {
 	// before drawing employee table on refresh the max percentage exemption
 	// form
-	console.log(locationData);
 	SCHEDFOX.form.enableMaxPercentageForm(locationData,
 			'#new-max-percentage-form');
 
@@ -689,7 +688,7 @@ function employeeSubTable(locationData) {
 							return 'lowRow';
 						}
 					}).attr('id', function(data) {
-						return data.employeeId;
+				return data.employeeId;
 			});
 
 	// create a cell in each row for each column
@@ -752,9 +751,13 @@ function employeeTabTable(tableId, d) {
 	d.locations.forEach(function(obj, i) {
 		obj.employeeMetricsList.forEach(function(emp) {
 			emp.locationName = obj.locationName;
+			emp.locationId = obj.locationId;
 			empData.push(emp);
 		});
 	});
+
+	SCHEDFOX.form.enableMaxPercentageForm(empData,
+			'#new-max-percentage-form-employee');
 
 	$(tableId).show();
 	$('#locateHead2').show();
@@ -864,7 +867,9 @@ function employeeTabTable(tableId, d) {
 						}
 					}
 				}
-			});
+			}).attr('id', function(data) {
+				return data.employeeId;
+			});;
 
 	// create a cell in each row for each column
 	var cells = rows.selectAll("td").data(function(row) {
@@ -1079,6 +1084,8 @@ SCHEDFOX.filters = {
 
 SCHEDFOX.form = {
 	enableMaxPercentageForm : function(data, el) {
+//		console.log('data', data);
+//		console.log('el', el);
 		// update selection
 		if (data && data.employeeMetricsList) {
 			var $select = $(el).find('select.client-select-control');
@@ -1086,7 +1093,7 @@ SCHEDFOX.form = {
 					'<option value="">---Select an employee---</option>');
 			var employees = data.employeeMetricsList;
 			var locationId = data.locationId;
-			
+
 			employees.forEach(function(obj, i) {
 				if ((obj.percentage * 100) > highColor) {
 					var o = $('<option/>', {
@@ -1094,27 +1101,50 @@ SCHEDFOX.form = {
 					}).text(obj.employeeName).attr('data',
 							parseFloat(obj.percentage * 100.0).toFixed(2))
 							.attr('account', locationId);
-							//.prop('selected', i == 0);
+					// .prop('selected', i == 0);
 					o.appendTo($select);
 				}
 			});
 
 			// enable refresh button
 			$(el).find('button#new-max').removeClass('disabled');
+			
+		} else if (data) {
+
+			var $select = $(el).find('select.client-select-control');
+			$select.empty().append(
+					'<option value="">---Select an employee---</option>');
+
+			data.forEach(function(obj, i) {
+				if ((obj.percentage * 100) > highColor) {
+					var o = $('<option/>', {
+						value : obj.employeeId
+					}).text(obj.employeeName).attr('data',
+							parseFloat(obj.percentage * 100.0).toFixed(2))
+							.attr('account', obj.locationId);
+					// .prop('selected', i == 0);
+					o.appendTo($select);
+				}
+			});
+
+			// enable refresh button
+			$(el).find('button#new-max').removeClass('disabled');
+
 		}
 	},
 	submitMaxPercentageForm : function(el, callback) {
 		console.log('inside submission of form!');
-		
+		el = $(el).parents('form:first');
 		var employeeId = $(el).find('select.client-select-control').val();
-		var new_max_percentage = $(el).find('input#new-max-percentage').val();
-		var account = $('option:selected', 'select.client-select-control').attr('account');
-		
+		var new_max_percentage = $(el).find('input.new-max-percentage').val();
+		var account = $(el).find('select.client-select-control').find(':selected').attr('account');
+
 		console.log(account + " : " + new_max_percentage + ' :' + employeeId);
-		
-		if (!employeeId || +employeeId === 0) {
+
+		if (!account || +account === 0 || !employeeId || +employeeId === 0) {
 			// don't do anything
 			console.log('no value selected');
+			callback('no value selected');
 			return;
 		}
 		// ajax new percentage and on success call callback
@@ -1143,7 +1173,7 @@ SCHEDFOX.form = {
 		});
 	},
 	onSelectChange : function(el) {
-		$("#new-max-percentage").slider("value", 10);
+		$(".new-max-percentage").slider("value", 10);
 	}
 };
 
@@ -1152,7 +1182,7 @@ $(document)
 				function() {
 
 					// set the slider
-					jQuery("#new-max-percentage").slider({
+					jQuery(".new-max-percentage").slider({
 						from : 0,
 						to : 100,
 						round : 1,
@@ -1212,11 +1242,12 @@ $(document)
 										showProgress();
 										SCHEDFOX.form
 												.submitMaxPercentageForm(
-														'#new-max-percentage-form',
+														this,
 														function(err, rowId) {
 															if (err) {
 																console
 																		.log('Error occured while saving data!');
+																hideProgress();
 																return;
 															}
 															console
@@ -1235,6 +1266,6 @@ $(document)
 
 					$("select#client-select-control").change(function() {
 						var option = $('option:selected', this).attr('data');
-						$("#new-max-percentage").slider('value', option);
+						$(".new-max-percentage").slider('value', option);
 					});
 				});

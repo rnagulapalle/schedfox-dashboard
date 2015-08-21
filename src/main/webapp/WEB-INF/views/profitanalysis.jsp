@@ -140,30 +140,7 @@
 				<div id="sectionA" class="tabledets tab-pane fade in active">
 					<!--<h3 class="col-lg-12 col-sm-12 col-xs-12 p-0 text-center">Branch 1</h3>-->
 					<div class="col-lg-12 col-sm-12 col-xs-12">
-						<div class="col-lg-12 col-sm-12 col-xs-12 pull-left">
-							<form id="new-max-percentage-form">
-								<fieldset>
-									<legend>Max Percentage Form</legend>
-									<div class="form-group">
-										<label for="exampleInputEmail1">Select an employee</label> 
-										<select
-											class="form-control client-select-control" id="client-select-control">
-											<option>---Select an employee---</option>
-										</select>
-									</div>
-									<div class="form-group">
-										<label for="exampleInputPassword1">New max percentage</label>
-										<div class="layout-slider">
-											<input id="new-max-percentage" type="slider" name="price"
-												value="0" />
-										</div>
-									</div>
-
-									<button id="new-max" class="btn btn-success disabled">Refresh
-										Data</button>
-								</fieldset>
-							</form>
-						</div>
+						<%@ include file="max-percentage-form.jsp" %>
 						<div class="table-responsive">
 							<h3 id="branchHead"></h3>
 							<div id="tableId" class="filter-table"></div>
@@ -177,6 +154,7 @@
 
 				<div id="sectionB" class="tab-pane fade">
 					<div class="col-lg-12 col-sm-12 col-xs-12">
+						<%@ include file="max-percentage-form-employee.jsp" %>
 						<div class="table-responsive">
 							<h3 id="locateHead2"></h3>
 							<div id="table3" class="filter-table"></div>
