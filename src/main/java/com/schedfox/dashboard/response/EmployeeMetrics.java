@@ -17,6 +17,11 @@ public class EmployeeMetrics implements Serializable {
     private String employeeName;
     private BigDecimal paidAmount;
     private BigDecimal billAmount;
+    private BigDecimal paidHourlyRegular;
+    private BigDecimal billHourlyRegular;
+    private Integer employeeId;
+    
+    private String rateCodeStr;
 
     public String getEmployeeName() {
         return employeeName;
@@ -27,7 +32,12 @@ public class EmployeeMetrics implements Serializable {
     }
 
     public BigDecimal getPaidAmount() {
-        return paidAmount;
+        if (paidAmount != null) {
+            return paidAmount;
+        } else {
+            return new BigDecimal(0);
+        }
+        
     }
 
     public void setPaidAmount(BigDecimal paidAmount) {
@@ -35,7 +45,11 @@ public class EmployeeMetrics implements Serializable {
     }
 
     public BigDecimal getBillAmount() {
-        return billAmount;
+        if (billAmount != null) {
+            return billAmount;
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setBillAmount(BigDecimal billAmount) {
@@ -44,9 +58,59 @@ public class EmployeeMetrics implements Serializable {
 
     public BigDecimal getPercentage() {
         try {
-            return new BigDecimal(this.paidAmount.doubleValue() / this.billAmount.doubleValue());
+            return new BigDecimal(this.paidHourlyRegular.doubleValue() / this.billHourlyRegular.doubleValue());
         } catch (Exception exe) {
             return new BigDecimal(0);
         }
     }
+
+    /**
+     * @return the paidHourlyRegular
+     */
+    public BigDecimal getPaidHourlyRegular() {
+        return paidHourlyRegular;
+    }
+
+    /**
+     * @param paidHourlyRegular the paidHourlyRegular to set
+     */
+    public void setPaidHourlyRegular(BigDecimal paidHourlyRegular) {
+        this.paidHourlyRegular = paidHourlyRegular;
+    }
+
+    /**
+     * @return the billHourlyRegular
+     */
+    public BigDecimal getBillHourlyRegular() {
+        return billHourlyRegular;
+    }
+
+    /**
+     * @param billHourlyRegular the billHourlyRegular to set
+     */
+    public void setBillHourlyRegular(BigDecimal billHourlyRegular) {
+        this.billHourlyRegular = billHourlyRegular;
+    }
+
+    /**
+     * @return the rateCodeStr
+     */
+    public String getRateCodeStr() {
+        return rateCodeStr;
+    }
+
+    /**
+     * @param rateCodeStr the rateCodeStr to set
+     */
+    public void setRateCodeStr(String rateCodeStr) {
+        this.rateCodeStr = rateCodeStr;
+    }
+
+	public Integer getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(Integer integer) {
+		this.employeeId = integer;
+	}
 }

@@ -1,23 +1,55 @@
 var firstDate = "";
-var toDate = "";
 var lName;
 
-var toDate = new Date();
-toDate = toDate.toISOString().substring(0, 10);
-var cv = new Date(toDate);
-cv.setDate(cv.getDate() - 21);
-var startDate = cv.getFullYear() + "-" + ("0" + (cv.getMonth() + 1)).slice(-2)
-		+ "-" + ("0" + cv.getDate()).slice(-2);
+var lowColor = 64;
+var highColor = 68;
+
+var startDate = getMonday(new Date()).toISOString().substring(0, 10);
+var toDate = getSunday(new Date()).toISOString().substring(0, 10);
 
 firstDate = startDate;
-toDate = toDate;
+
+var apiUrl = "profitanalysis?startDate=" + startDate + "&endDate=" + toDate;
+var postPercentage = "maxpercentage";
+// ajax loader functions
+var spinnerVisible = false;
+function showProgress() {
+	if (!spinnerVisible) {
+		$("div#spinner").fadeIn("fast");
+		spinnerVisible = true;
+	}
+};
+
+function getMonday(d) {
+	d = new Date(d);
+	var day = d.getDay(), diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust
+	// when
+	// day
+	// is
+	// sunday
+	return new Date(d.setDate(diff));
+}
+
+function getSunday(d) {
+	d = getMonday(d);
+	var day = d.getDay(), diff = d.getDate() + 6;
+	return new Date(d.setDate(diff));
+}
+
+function hideProgress() {
+	if (spinnerVisible) {
+		var spinner = $("div#spinner");
+		spinner.stop();
+		spinner.fadeOut("fast");
+		spinnerVisible = false;
+	}
+};
 
 function dashboard(id, fData) {
 	var barRed = "#E84C3D";
 	var barGreen = "#2ECD71";
 	var barYellow = "#F2C40F";
-	var barColor = '#3598DC';
-	var pieMouse;
+
 	$('#fd').text(firstDate);
 	$('#tda').text(toDate);
 	function segColor(c) {
@@ -27,18 +59,15 @@ function dashboard(id, fData) {
 		}[c];
 	}
 
-	fData.forEach(function(d) {
-		d.total = ((d.values.paid / d.values.bill) * 100).toFixed(2);
-	});
-
 	function wrap(text, width) {
 		text
 				.each(function() {
 					var text = d3.select(this), words = text.text()
 							.split(/\s+/).reverse(), word, line = [], lineNumber = 0, lineHeight = 1.1, // ems
 					y = text.attr("y"), dy = parseFloat(text.attr("dy")), tspan = text
-							.text(null).append("tspan").attr("x", 0).attr("y",
-									y).attr("dy", dy + "em");
+							.text(null).append("tspan").attr("x", -25).attr(
+									"y", 3).attr("dy", dy + "em");
+					text.attr("transform", "rotate(-65)");
 					while (word = words.pop()) {
 						line.push(word);
 						tspan.text(line.join(" "));
@@ -46,8 +75,8 @@ function dashboard(id, fData) {
 							line.pop();
 							tspan.text(line.join(" "));
 							line = [ word ];
-							tspan = text.append("tspan").attr("x", 0).attr("y",
-									y).attr("dy",
+							tspan = text.append("tspan").attr("x", -25).attr(
+									"y", 3).attr("dy",
 									++lineNumber * lineHeight + dy + "em")
 									.text(word);
 						}
@@ -57,14 +86,12 @@ function dashboard(id, fData) {
 
 	// function to handle histogram.
 	function histoGram(fD) {
-
 		var colorred = d3.scale.ordinal().range([ barRed ]);
 		var colorgreen = d3.scale.ordinal().range([ barGreen ]);
 		var coloryellow = d3.scale.ordinal().range([ barYellow ]);
 
-		// var hG={}, hGDim = {t: 60, r: 0, b: 180, l: 0};
 		var hG = {}, hGDim = {
-			t : 30,
+			t : 20,
 			r : 0,
 			b : 250,
 			l : 0
@@ -81,7 +108,7 @@ function dashboard(id, fData) {
 		// create function for x-axis mapping.
 		var x = d3.scale.ordinal().rangeRoundBands([ 0, hGDim.w ], 0.1).domain(
 				fD.map(function(d) {
-					return d[0];
+					return d.branchName;
 				}));
 
 		var insertLinebreaks = function(d) {
@@ -104,7 +131,7 @@ function dashboard(id, fData) {
 		// Create function for y-axis map.
 		var y = d3.scale.linear().range([ hGDim.h, 0 ]).domain(
 				[ 0, d3.max(fD, function(d) {
-					return d[1];
+					return d.percent;
 				}) ]);
 
 		// Create bars for histogram to contain rectangles and freq labels.
@@ -113,58 +140,52 @@ function dashboard(id, fData) {
 
 		// create the rectangles.
 		bars.append("rect").attr("x", function(d) {
-			return x(d[0]);
+			return x(d.branchName);
 		}).attr("y", function(d) {
-			return y(d[1]);
+			return y(d.percent);
 		})
 		// .attr("width", x.rangeBand())
 		.attr("width", x.rangeBand()).attr("height", function(d) {
-			return hGDim.h - y(d[1]);
+			return hGDim.h - y(d.percent);
 		})
 
-		.attr("fill", function(d, i) {
-			if (d[1] < 64)
-				return colorgreen(i % 1);
-			else if (d[1] < 68 && d[1] > 64)
-				return coloryellow(i % 1);
-			else if (d[1] > 68)
-				return colorred(i % 1);
-		})
+		.attr(
+				"fill",
+				function(d, i) {
+					if ((d.percent * 100.0) < lowColor)
+						return colorgreen(i % 1);
+					else if ((d.percent * 100.0) < highColor
+							&& (d.percent * 100.0) > lowColor)
+						return coloryellow(i % 1);
+					else if ((d.percent * 100.0) > highColor)
+						return colorred(i % 1);
+				})
 
-		.on("mouseover", mouseover)// mouseover is defined below.
+		.on("click", mouseclick)// mouseover is defined below.
 		.on("mouseout", mouseout);// mouseout is defined below.
 
 		// Create the frequency labels above the rectangles.
-		bars.append("text").text(function(d) {
-			return d3.format(",")(d[1]) + "%"
-		}).attr("x", function(d) {
-			return x(d[0]) + x.rangeBand() / 2;
+		bars.append("text").text(
+				function(d) {
+					return d3.format(",")(
+							parseFloat(d.percent * 100.0).toFixed(2))
+							+ "%"
+				}).attr("x", function(d) {
+			return x(d.branchName) + x.rangeBand() / 2;
 		}).attr("y", function(d) {
-			return y(d[1]) - 5;
+			return y(d.percent) - 5;
 		}).attr("text-anchor", "middle");
 
-		function mouseover(d) {
-			// alert('dfd');
-
-			// utility function to be called on mouseover.
-			// filter for selected state.
-			var st = fData.filter(function(s) {
-				return s.key == d[0];
-			})[0], nD = d3.keys(st.values).map(function(s) {
-				// if(s != 'paidpercentage')
-				return {
-					type : s,
-					values : st.values[s]
-				};
-			});
-			console.log(nD);
-			// call update functions of pie-chart and legend.
-			// pC.update(nD);
-			// leg.update(nD);
-
-			$('#table2').hide();
-			$('#locateHead').hide();
-			drawTable(d[0], firstDate, toDate);
+		function mouseclick(d) {
+			$('#table2').hide("slow");
+			$('#locateHead').hide("slow");
+			// before draw table reset filters
+			// populate table with client data
+			drawTable('#tableId', d, firstDate, toDate);
+			// format the data for each location
+			employeeTabTable('#table3', d, firstDate, toDate);
+			// get location_rows of current active tab
+			LOCATION_ROWS = $('.filter-table table tr').not('thead tr');
 		}
 
 		function mouseout(d) { // utility function to be called on mouseout.
@@ -180,7 +201,7 @@ function dashboard(id, fData) {
 			// update the domain of the y-axis map to reflect change in
 			// frequencies.
 			y.domain([ 0, d3.max(nD, function(d) {
-				return d[1];
+				return d.percent;
 			}) ]);
 
 			// Attach the new data to the bars.
@@ -189,30 +210,33 @@ function dashboard(id, fData) {
 			// transition the height and color of rectangles.
 			bars.select("rect").transition().duration(500).attr("y",
 					function(d) {
-						return y(d[1]);
+						return y(d.percent);
 					}).attr("height", function(d) {
-				return hGDim.h - y(d[1]);
+				return hGDim.h - y(d.percent);
 			})
 			// .attr("fill", function(d, i) { if(pieMouse){} else{return color;}
 			// } );
-			.attr("fill", function(d, i) {
-				if (pieMouse) {
-					if (d[1] < 64)
-						return colorgreen(i % 1);
-					else if (d[1] < 68 && d[1] > 64)
-						return coloryellow(i % 1);
-					else if (d[1] > 68)
-						return colorred(i % 1);
-				} else {
-					return color;
-				}
-			});
+			.attr(
+					"fill",
+					function(d, i) {
+						if (pieMouse) {
+							if ((d.percent * 100.0) < lowColor)
+								return colorgreen(i % 1);
+							else if ((d.percent * 100.0) < highColor
+									&& (d.percent * 100.0) > lowColor)
+								return coloryellow(i % 1);
+							else if ((d.percent * 100.0) > highColor)
+								return colorred(i % 1);
+						} else {
+							return color;
+						}
+					});
 
 			// transition the frequency labels location and change value.
 			bars.select("text").transition().duration(500).text(function(d) {
-				return d3.format(",")(d[1])
+				return d3.format(",")(d.percent)
 			}).attr("y", function(d) {
-				return y(d[1]) - 5;
+				return y(d.percent) - 5;
 			});
 		}
 		return hG;
@@ -340,70 +364,64 @@ function dashboard(id, fData) {
 
 		function getLegend(d, aD) { // Utility function to compute percentage.
 			// console.log(d);
-
 			return d3.format("%")(d.values / d3.sum(aD.map(function(v) {
 				return parseFloat(v.values).toFixed(2);
 			})));
 		}
-
 		return leg;
-
 	}
 
-	// calculate total frequency by segment for all state.
-	var tF = [ 'paid', 'bill' ].map(function(d) {
-		return {
-			type : d,
-			values : d3.sum(fData.map(function(t) {
-				return t.values[d];
-			}))
-		};
-	});
-
-	// calculate total frequency by state for all segment.
-	var sF = fData.map(function(d) {
-		return [ d.key, d.total ];
-	});
-
-	var hG = histoGram(sF); // create the histogram.
-	// pC = pieChart(tF); // create the pie-chart.
-
-	// var leg= legend(tF); // create the legend.
+	var hG = histoGram(fData); // create the histogram.
 }
+// end of dashboard function
+
 /* Button Click */
 d3.select('#dfg').on(
 		'click',
 		function() {
+			var dateTo = $('#input-start-date').val();
+			if (!dateTo || dateTo === "") {
+				return;
+			}
+			var tmp = $('#input-end-date').val();
+			if (tmp && tmp !== "") {
+				toDate = tmp;
+			} else {
+				dateTo = dateTo ? dateTo : toDate;
+				var cv = new Date(dateTo);
+				cv.setDate(cv.getDate() - 21);
+				var startDate = cv.getFullYear() + "-"
+						+ ("0" + (cv.getMonth() + 1)).slice(-2) + "-"
+						+ ("0" + cv.getDate()).slice(-2);
+				dateFirst = startDate ? startDate : firstDate;
+				firstDate = dateFirst;
+				toDate = firstDate;
+			}
+
 			$('#table2').hide();
 			$('#tableId').hide();
 			$('#locateHead').hide();
 			$('#branchHead').hide();
 			$('#dashboard').empty();
-			var dateTo = $('#fromdatepicker').datepicker({
-				dateFormat : 'yy-mm-dd'
-			}).val();
 
-			dateTo = dateTo ? dateTo : toDate;
-			var cv = new Date(dateTo);
-			cv.setDate(cv.getDate() - 21);
-			var startDate = cv.getFullYear() + "-"
-					+ ("0" + (cv.getMonth() + 1)).slice(-2) + "-"
-					+ ("0" + cv.getDate()).slice(-2);
-			dateFirst = startDate ? startDate : firstDate;
-			firstDate = dateFirst;
-			toDate = dateTo;
+			$('div span#to').html(dateTo);
+			$('div span#from').html(toDate)
 
-			$('#fd').text(firstDate);
-			$('#tda').text(toDate);
-			d3.json("resources/js/data.json", function(error, data) {
-
-				var d = FormJsonData(data, dateFirst, dateTo);
-				if (d.length > 0)
-					dashboard('#dashboard', d);
-
+			// ajax loader start
+			showProgress();
+			apiUrl = "profitanalysis?startDate=" + toDate + "&endDate="
+					+ dateTo;
+			var jqxhr = $.getJSON(apiUrl, function(error, data) {
+			}).done(function(data) {
+				dashboard('#dashboard', data);
+			}).fail(function(error) {
+			}).always(function() {
+				// ajax loader stop
+				hideProgress();
 			});
 
 		});
+
 d3.select('#resetId').on(
 		'click',
 		function() {
@@ -433,129 +451,185 @@ $("#fromdatepicker").datepicker({
 	dateFormat : 'yy-mm-dd'
 });
 
-d3.json("resources/js/data.json", function(error, jData) {
-	var d = FormJsonData(jData, firstDate, toDate);
+// ajax loader start
+showProgress();
 
-	dashboard('#dashboard', d);
+var jqxhr = $.getJSON(apiUrl, function(error, data) {
+}).done(function(data) {
+	dashboard('#dashboard', data);
+}).fail(function(error) {
+}).always(function() {
+	// ajax loader stop
+	hideProgress();
 });
-function FormJsonData(data, firstDate, toDate) {
-	data = data;// dateValueSel(data,firstDate,toDate);
 
-	/* Form data */
-	var expenseMetrics = d3.nest().key(function(d) {
-		return d.branchname;
-	})
-
-	.rollup(function(v) {
-		return {
-
-			paid : (d3.sum(v, function(d) {
-				return parseFloat(d.paidamt);
-			})).toFixed(2),
-			bill : (d3.sum(v, function(d) {
-				return parseFloat(d.billamt);
-			})).toFixed(2),
-		// paidPercentage :(d3.sum(v, function(d) {return
-		// ((parseFloat(d.paidamt) / parseFloat(d.billamt)) * 100/ v.length
-		// );})).toFixed(2) ,
-
-		};
-	}).entries(data);
-
-	var a = JSON.stringify(expenseMetrics);
-	var c = JSON.parse(a);
-	// console.log(c);
-	return c;
-	/* End */
-}
-function drawTable(branchName) {
-	$('#tableId').show();
+/**
+ * This function is responsible for drawing out the locations table once a
+ * branch has been moused over. D is the data returned by the server w/o
+ * translation as represented by the Branch object in java with it's
+ * corresponding locations and employees nested in collections
+ * 
+ * @param Object
+ *            d
+ * @returns {undefined}
+ */
+function drawTable(tableId, d) {
+	// draw table
+	$(tableId).show();
 	$('#branchHead').show();
-	$('#tableId').empty();
-	$('#branchHead').text('Profit analysis of Branch-' + branchName);
-	d3.json("resources/js/data.json",
-			function(error, jData) {
+	$(tableId).empty();
+	$('#branchHead').text('Profit analysis of - ' + d.branchName);
 
-				// data = dateValueSel(jData,firstDate,toDate)
-				tabledata = branchNameSel(jData, branchName)
-				finalData = groupData(tabledata)
-				finalData.forEach(function(d) {
-					d.location = d.values.location;
-				});
-				finalData.forEach(function(d) {
-					d.branchname = d.values.branchname;
-				});
-				finalData.forEach(function(d) {
-					d.paid = d.values.paid;
-				});
-				finalData.forEach(function(d) {
-					d.bill = d.values.bill;
-				});
+	var columns = [ "location", "paid", "bill", "percent" ];
 
-				var columns = [ "location", "paid", "bill" ];
-				var obj = JSON.stringify(finalData);
-				for (var i = 0; i < finalData.length; i++) {
-					// delete tabledata[i]['branchname'];
-					delete finalData[i]['key'];
-					delete finalData[i]['values'];
-					// delete tabledata[i]['percentage'];
+	var table = d3.select(tableId).append("table").attr("class",
+			"table table-bordered table-hover").attr("style",
+			"border-collapse:collapse;"), thead = table.append("thead"), tbody = table
+			.append("tbody");
+
+	thead.append("tr").selectAll("th").data(columns).enter().append("th").attr(
+			"class", function(data) {
+				if (data === "location") {
+					return "col-xs-9 col-sm-6 col-lg-8";
+				} else {
+					return "col-xs-4 col-sm-2 col-lg-3";
 				}
-				console.log(finalData);
+			}).text(function(column) {
+		return column;
+	});
 
-				var table = d3.select("#tableId").append("table").attr("class",
-						"table table-bordered table-hover").attr("style",
-						"border-collapse:collapse;"), thead = table
-						.append("thead"), tbody = table.append("tbody");
+	// create a row for each object in the data
+	var rows = tbody
+			.selectAll("tr")
+			.data(d.locations)
+			.enter()
+			.append("tr")
+			.attr("id", function(data) {
+				return data.locationId;
+			})
+			.attr(
+					"class",
+					function(data) {
+						if ((data.percentage * 100.0) > highColor) {
+							// red color
+							return 'highRow';
+						} else if ((data.percentage * 100.0) < highColor
+								&& (data.percentage * 100.0) > lowColor) {
+							// orange rows
+							return 'mediumRow'
+						} else {
+							// green rows
+							return 'lowRow';
+						}
+					})
+			.attr(
+					'style',
+					function(data) {
+						if (SCHEDFOX.filters.isAllFiltersChecked()
+								|| SCHEDFOX.filters.isNoFilterChecked()) {
+							// dont do hide any
+							return 'display:trable-row';
+						} else {
+							// check which one he is selected
+							// user wants to see high profit rows
+							if (SCHEDFOX.filters.isOnlyHighSelected()) {
+								// check this row is high profit row otherwise
+								// display none
+								if ((data.percentage * 100.0) > highColor
+										|| (data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									return 'display:none';
+								}
+							}
+							// is only med selected, user wants to see only med
+							// rows
+							if (SCHEDFOX.filters.isOnlyMedSelected()) {
+								if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									return 'display:trable-row';
+								} else {
+									return 'display:none';
+								}
+							}
 
-				// append the header row
-				thead.append("tr").selectAll("th").data(columns).enter()
-						.append("th").text(function(column) {
-							return column;
-						});
+							// is only med selected, user wants to see only low
+							// profit rows
+							if (SCHEDFOX.filters.isOnlyLowSelected()) {
+								if ((data.percentage * 100.0) > highColor) {
+									return 'display:trable-row';
+								} else {
+									return 'display:none';
+								}
+							}
 
-				// create a row for each object in the data
-				var rows = tbody.selectAll("tr").data(finalData).enter()
-
-				.append("tr");
-
-				// create a cell in each row for each column
-				var cells = rows.selectAll("td").data(function(row) {
-					return columns.map(function(column) {
-						return {
-							column : column,
-							value : row[column]
-						};
+							if (SCHEDFOX.filters.isHighAndMedSelected()) {
+								if ((data.percentage * 100.0) > highColor) {
+									return 'display:none';
+								}
+							}
+							if (SCHEDFOX.filters.isHighAndLowSelected()) {
+								if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									return 'display:none';
+								}
+							}
+							if (SCHEDFOX.filters.isLowAndMedSelected()) {
+								// if ((data.percentage * 100.0) > lowColor) {
+								// return 'display:none';
+								// }
+								if ((data.percentage * 100.0) > highColor) {
+									// red color
+									return 'display:trable-row';
+								} else if ((data.percentage * 100.0) < highColor
+										&& (data.percentage * 100.0) > lowColor) {
+									// orange rows
+									return 'display:trable-row';
+								} else {
+									// green rows
+									return 'display:none';
+								}
+							}
+						}
 					});
-				}).enter()
 
-				.append("td").on('click', function(d, i) {
-
-					// if(i == 0)if(1){
-					if (i == 0) {
-						var lName = $(this).text();
-					} else if (i == 1) {
-						var lName = $(this).prev().text();
-					} else if (i == 2) {
-						var lName = $(this).prev().prev().text();
-					}
-
-					$('.highlight_td').removeClass('highlight_td');
-					$(this).closest('tr').addClass('highlight_td');
-					// var lName = $(this).text();
-
-					var bName = $('#branchHead').text();// $(this).prev().text();
-
-					bName = bName.split("-");
-
-					return subTable(lName, bName[1], firstDate, toDate);
-
-				}).text(function(d) {
-					return d.value;
-				});
-
-			});
+	// create a cell in each row for each column
+	var cells = rows.selectAll("td").data(function(row) {
+		return columns.map(function(column) {
+			if (column === 'location') {
+				return {
+					column : column,
+					value : row.locationName,
+					data : row
+				};
+			} else if (column === 'paid') {
+				return {
+					column : column,
+					value : parseFloat(row.paidAmount).toFixed(2),
+					data : row
+				};
+			} else if (column === 'bill') {
+				return {
+					column : column,
+					value : parseFloat(row.billAmount).toFixed(2),
+					data : row
+				};
+			} else {
+				return {
+					column : column,
+					value : parseFloat(row.percentage * 100.0).toFixed(2),
+					data : row
+				};
+			}
+		});
+	}).enter().append("td").on('click', function(row, c, i) {
+		var location = row.data;
+		$('.highlight_td').removeClass('highlight_td');
+		$(this).closest('tr').addClass('highlight_td');
+		return employeeSubTable(location);
+	}).text(function(d) {
+		return d.value;
+	});
 }
-/* For Table Create */
 
 function branchNameSel(data, selectValue) {
 
@@ -568,103 +642,630 @@ function locationNameSel(data, lName) {
 		return lName === el.location;
 	});
 }
+
 function removeData(tabledata) {
 	return tabledata.filter(function(el) {
 		return el.branchname;
 	});
 }
-function subTable(lName, bName, firstDate, toDate) {
+function employeeSubTable(locationData) {
+	// before drawing employee table on refresh the max percentage exemption
+	// form
+	SCHEDFOX.form.enableMaxPercentageForm(locationData,
+			'#new-max-percentage-form');
+
 	$('#table2').show();
 	$('#locateHead').show();
 	$('#table2').empty();
-	$('#locateHead').text('Employee details of Location-' + lName);
-	d3.json("resources/js/data.json",
-			function(error, jData) {
+	$('#locateHead').text('Employees @ ' + locationData.locationName);
 
-				data = jData;// dateValueSel(jData,firstDate,toDate)
-				tabledata = branchNameSel(data, bName)
-				locationData = locationNameSel(tabledata, lName)
-				/* Delete Unwanted Data from jSON */
-				var obj = JSON.stringify(locationData);
-				for (var i = 0; i < locationData.length; i++) {
-					delete locationData[i]['branchname'];
-					delete locationData[i]['branchid'];
-					delete locationData[i]['mydate'];
-					delete locationData[i]['percentage'];
-					delete locationData[i]['emp_address'];
-					delete locationData[i]['emp_email'];
-				}
-				/* End */
+	var columns = [ "name", "paid", "bill", "paid-rate", "rate", "bill-rate",
+			"percent" ];
+	/* Draw Table */
+	var table = d3.select("#table2").append("table").attr("class",
+			"table table-hover table-bordered").attr("style",
+			"border-collapse:collapse;"), thead = table.append("thead"), tbody = table
+			.append("tbody");
 
-				var columns = [ "emp_name", "paidamt", "billamt" ];
-				/* Draw Table */
-				var table = d3.select("#table2").append("table").attr("class",
-						"table table-bordered").attr("style",
-						"border-collapse:collapse;"), thead = table
-						.append("thead"), tbody = table.append("tbody");
-
-				// append the header row
-				thead.append("tr").selectAll("th").data(columns).enter()
-						.append("th").text(function(column) {
-							return column;
-						});
-
-				// create a row for each object in the data
-				var rows = tbody.selectAll("tr").data(locationData).enter()
-						.append("tr");
-
-				// create a cell in each row for each column
-				var cells = rows.selectAll("td").data(function(row) {
-					return columns.map(function(column) {
-						return {
-							column : column,
-							value : row[column]
-						};
-					});
-				}).enter().append("td").text(function(d) {
-					return d.value;
-				});
-				/* End */
+	// append the header row
+	thead.append("tr").selectAll("th").data(columns).enter().append("th").text(
+			function(column) {
+				return column;
 			});
 
+	// create a row for each object in the data
+	var rows = tbody.selectAll("tr").data(locationData.employeeMetricsList)
+			.enter().append("tr").attr(
+					"class",
+					function(data) {
+
+						if ((data.percentage * 100.0) > highColor) {
+							return 'highRow';
+						} else if ((data.percentage * 100.0) < highColor
+								&& (data.percentage * 100.0) > lowColor) {
+							return 'mediumRow'
+						} else {
+							return 'lowRow';
+						}
+					}).attr('id', function(data) {
+				return data.employeeId;
+			});
+
+	// create a cell in each row for each column
+	var cells = rows.selectAll("td").data(function(row) {
+		return columns.map(function(column) {
+			if (column === 'name') {
+				return {
+					column : column,
+					value : row.employeeName,
+					data : row
+				};
+			} else if (column == 'rate') {
+				return {
+					column : column,
+					value : row.rateCodeStr,
+					data : row
+				}
+			} else if (column === 'paid') {
+				return {
+					column : column,
+					value : parseFloat(row.paidAmount).toFixed(2),
+					data : row
+				};
+			} else if (column === 'bill') {
+				return {
+					column : column,
+					value : parseFloat(row.billAmount).toFixed(2),
+					data : row
+				};
+			} else if (column === 'paid-rate') {
+				return {
+					column : column,
+					value : parseFloat(row.paidHourlyRegular).toFixed(2),
+					data : row
+				};
+			} else if (column === 'bill-rate') {
+				return {
+					column : column,
+					value : parseFloat(row.billHourlyRegular).toFixed(2),
+					data : row
+				};
+			} else {
+				return {
+					column : column,
+					value : parseFloat(row.percentage * 100.0).toFixed(2),
+					data : row
+				};
+			}
+		});
+	}).enter().append("td").text(function(d) {
+		return d.value;
+	});
+
 }
-function groupData(tabledata) {
 
-	var expenseMetrics = d3.nest().key(function(d) {
-		return d.location;
-	})
+// employees tab table
+function employeeTabTable(tableId, d) {
+	// parse data
+	var empData = [];
+	d.locations.forEach(function(obj, i) {
+		obj.employeeMetricsList.forEach(function(emp) {
+			emp.locationName = obj.locationName;
+			emp.locationId = obj.locationId;
+			empData.push(emp);
+		});
+	});
 
-	.rollup(function(v) {
-		return {
+	SCHEDFOX.form.enableMaxPercentageForm(empData,
+			'#new-max-percentage-form-employee');
 
-			branchname : (d3.max(v, function(d) {
-				return (d.branchname);
-			})),
-			location : (d3.max(v, function(d) {
-				return (d.location);
-			})),
-			// paid: (d3.sum(v, function(d) {return
-			// parseFloat(d.paidamt);})).toFixed(2),
-			paid : (d3.mean(v, function(d) {
-				return parseFloat(d.locpaidamt);
-			})).toFixed(2),
-			bill : (d3.mean(v, function(d) {
-				return parseFloat(d.locbillamt);
-			})).toFixed(2),
-		// bill: (d3.sum(v, function(d) {return
-		// parseFloat(d.billamt);})).toFixed(2),
-		// paidPercentage :(d3.sum(v, function(d) {return
-		// ((parseFloat(d.paidamt) / parseFloat(d.billamt)) * 100/ v.length
-		// );})).toFixed(2) ,
+	$(tableId).show();
+	$('#locateHead2').show();
+	$(tableId).empty();
+	$('#locateHead2').text('Employees Profit Analysis');
 
-		};
-	}).entries(tabledata);
+	var columns = [ "name", "location", "paid", "bill", "rate", "paid-rate",
+			"bill-rate", "percent" ];
+	/* Draw Table */
+	var table = d3.select(tableId).append("table").attr("class",
+			"table table-hover table-bordered").attr("style",
+			"border-collapse:collapse;"), thead = table.append("thead"), tbody = table
+			.append("tbody");
 
-	var a = JSON.stringify(expenseMetrics);
-	var c = JSON.parse(a);
+	// append the header row
+	thead.append("tr").selectAll("th").data(columns).enter().append("th").attr(
+			"class", function(data) {
+				if (data === "location") {
+					return "col-xs-5 col-sm-2 col-lg-3";
+				} else {
+					return "col-xs-4 col-sm-2 col-lg-3";
+				}
+			}).text(function(column) {
+		return column;
+	});
 
-	return c;
+	// create a row for each object in the data
+	var rows = tbody.selectAll("tr").data(empData).enter().append("tr").attr(
+			"class",
+			function(data) {
+				// hide anything percentage is 0
+				if (+(data.percentage * 100.0) === 0) {
+					return 'hide';
+				} else if ((data.percentage * 100.0) > highColor) {
+					return 'highRow';
+				} else if ((data.percentage * 100.0) < highColor
+						&& (data.percentage * 100.0) > lowColor) {
+					return 'mediumRow'
+				} else {
+					return 'lowRow';
+				}
+			}).attr(
+			'style',
+			function(data) {
+				if (SCHEDFOX.filters.isAllFiltersChecked()
+						|| SCHEDFOX.filters.isNoFilterChecked()) {
+					// dont do hide any
+					return 'display:trable-row';
+				} else {
+					// check which one he is selected
+					// user wants to see high profit rows
+					if (SCHEDFOX.filters.isOnlyHighSelected()) {
+						// check this row is high profit row otherwise
+						// display none
+						if ((data.percentage * 100.0) > highColor
+								|| (data.percentage * 100.0) < highColor
+								&& (data.percentage * 100.0) > lowColor) {
+							return 'display:none';
+						}
+					}
+					// is only med selected, user wants to see only med
+					// rows
+					if (SCHEDFOX.filters.isOnlyMedSelected()) {
+						if ((data.percentage * 100.0) < highColor
+								&& (data.percentage * 100.0) > lowColor) {
+							return 'display:trable-row';
+						} else {
+							return 'display:none';
+						}
+					}
+
+					// is only med selected, user wants to see only low
+					// profit rows
+					if (SCHEDFOX.filters.isOnlyLowSelected()) {
+						if ((data.percentage * 100.0) > highColor) {
+							return 'display:trable-row';
+						} else {
+							return 'display:none';
+						}
+					}
+
+					if (SCHEDFOX.filters.isHighAndMedSelected()) {
+						if ((data.percentage * 100.0) > highColor) {
+							return 'display:none';
+						}
+					}
+					if (SCHEDFOX.filters.isHighAndLowSelected()) {
+						if ((data.percentage * 100.0) < highColor
+								&& (data.percentage * 100.0) > lowColor) {
+							return 'display:none';
+						}
+					}
+					if (SCHEDFOX.filters.isLowAndMedSelected()) {
+						// if ((data.percentage * 100.0) > lowColor) {
+						// return 'display:none';
+						// }
+						if ((data.percentage * 100.0) > highColor) {
+							// red color
+							return 'display:trable-row';
+						} else if ((data.percentage * 100.0) < highColor
+								&& (data.percentage * 100.0) > lowColor) {
+							// orange rows
+							return 'display:trable-row';
+						} else {
+							// green rows
+							return 'display:none';
+						}
+					}
+				}
+			}).attr('id', function(data) {
+				return data.employeeId;
+			});;
+
+	// create a cell in each row for each column
+	var cells = rows.selectAll("td").data(function(row) {
+		return columns.map(function(column) {
+			if (column === 'name') {
+				return {
+					column : column,
+					value : row.employeeName,
+					data : row
+				};
+			} else if (column == 'rate') {
+				return {
+					column : column,
+					value : row.rateCodeStr,
+					data : row
+				}
+			} else if (column === 'location') {
+				return {
+					column : column,
+					value : row.locationName,
+					data : row
+				};
+			} else if (column === 'paid') {
+				return {
+					column : column,
+					value : parseFloat(row.paidAmount).toFixed(2),
+					data : row
+				};
+			} else if (column === 'bill') {
+				return {
+					column : column,
+					value : parseFloat(row.billAmount).toFixed(2),
+					data : row
+				};
+			} else if (column === 'paid-rate') {
+				return {
+					column : column,
+					value : parseFloat(row.paidHourlyRegular).toFixed(2),
+					data : row
+				};
+			} else if (column === 'bill-rate') {
+				return {
+					column : column,
+					value : parseFloat(row.billHourlyRegular).toFixed(2),
+					data : row
+				};
+			} else {
+				return {
+					column : column,
+					value : parseFloat(row.percentage * 100.0).toFixed(2),
+					data : row
+				};
+			}
+		});
+	}).enter().append("td").text(function(d) {
+		return d.value;
+	});
 
 }
 
-/* End */
+// filter code starts here
+var SCHEDFOX = SCHEDFOX || {};
+var LOCATION_ROWS = null;
+SCHEDFOX.filters = {
+
+	user_filter_options : {
+		high : false,
+		low : false,
+		med : false
+	},
+	filterRows : function(el) {
+		// check user selected before table drawn
+		if ($(el).is(':checked')) {
+			if (el && el.value === 'high') {
+				this.user_filter_options.high = true;
+			}
+			if (el && el.value === 'med') {
+				this.user_filter_options.med = true;
+			}
+			if (el && el.value === 'low') {
+				this.user_filter_options.low = true;
+			}
+		} else {
+			// they are unchecked
+			if (el && el.value === 'high') {
+				this.user_filter_options.high = false;
+			}
+			if (el && el.value === 'med') {
+				this.user_filter_options.med = false;
+			}
+			if (el && el.value === 'low') {
+				this.user_filter_options.low = false;
+			}
+		}
+
+		if (LOCATION_ROWS) {
+
+			if (this.isAnyFilterChecked()) {
+				console.log('inside location rows checked');
+				if (this.isAllFiltersChecked()) {
+					this.displayAllRows();
+					return;
+				}
+				// handle user selects any one
+				if (this.user_filter_options.high
+						&& !this.user_filter_options.med
+						&& !this.user_filter_options.low) {
+					console.log('only high profit filter selected');
+					var lowRow = LOCATION_ROWS.filter('.lowRow').show();
+					LOCATION_ROWS.not(lowRow).hide('slow');
+					return;
+				}
+				if (this.user_filter_options.med
+						&& !this.user_filter_options.high
+						&& !this.user_filter_options.low) {
+					console.log('only medium profit filter selected');
+					var mediumRow = LOCATION_ROWS.filter('.mediumRow').show();
+					LOCATION_ROWS.not(mediumRow).hide('slow');
+					return;
+				}
+				if (this.user_filter_options.low
+						&& !this.user_filter_options.med
+						&& !this.user_filter_options.high) {
+					console.log('only low profit filter selected');
+					var highRow = LOCATION_ROWS.filter('.highRow').show();
+					LOCATION_ROWS.not(highRow).hide('slow');
+					return;
+				}
+
+				// handle user selects any two filters
+				if (this.user_filter_options.high
+						&& this.user_filter_options.med
+						&& !this.user_filter_options.low) {
+					console.log('user selected high and medium profit filters');
+					var lowRow = LOCATION_ROWS.filter('.lowRow').show();
+					LOCATION_ROWS.not(lowRow).hide('slow');
+					LOCATION_ROWS.filter('.mediumRow').show('slow');
+					return;
+				}
+
+				if (this.user_filter_options.high
+						&& !this.user_filter_options.med
+						&& this.user_filter_options.low) {
+					console.log('user selected high and low profit filters');
+					var lowRow = LOCATION_ROWS.filter('.lowRow').show();
+					LOCATION_ROWS.not(lowRow).hide('slow');
+					LOCATION_ROWS.filter('.highRow').show('slow');
+					return;
+				}
+
+				if (!this.user_filter_options.high
+						&& this.user_filter_options.med
+						&& this.user_filter_options.low) {
+					console.log('user selected med and low profit filters');
+					var highRow = LOCATION_ROWS.filter('.highRow').show();
+					LOCATION_ROWS.not(highRow).hide('slow');
+					LOCATION_ROWS.filter('.mediumRow').show('slow');
+					return;
+				}
+				//				
+			} else {
+				this.displayAllRows();
+				return;
+			}
+
+		}// end of location_rows check
+
+	},
+	isAllFiltersChecked : function() {
+		return (this.user_filter_options.high && this.user_filter_options.med && this.user_filter_options.low);
+	},
+	isAnyFilterChecked : function() {
+		return (this.user_filter_options.high || this.user_filter_options.med || this.user_filter_options.low);
+
+	},
+	isNoFilterChecked : function() {
+		return (!this.user_filter_options.high && !this.user_filter_options.med && !this.user_filter_options.low);
+
+	},
+	displayAllRows : function() {
+		console.log('inside show all');
+		var highRow = LOCATION_ROWS.filter('.highRow').show('slow');
+		var highRow = LOCATION_ROWS.filter('.mediumRow').show('slow');
+		var highRow = LOCATION_ROWS.filter('.lowRow').show('slow');
+	},
+	isOnlyHighSelected : function() {
+		return (this.user_filter_options.high && !this.user_filter_options.med && !this.user_filter_options.low);
+
+	},
+	isOnlyMedSelected : function() {
+		return (!this.user_filter_options.high && this.user_filter_options.med && !this.user_filter_options.low);
+	},
+	isOnlyLowSelected : function() {
+		return (!this.user_filter_options.high && !this.user_filter_options.med && this.user_filter_options.low);
+	},
+	isHighAndMedSelected : function() {
+		return (this.user_filter_options.high && this.user_filter_options.med && !this.user_filter_options.low);
+	},
+	isHighAndLowSelected : function() {
+		return (this.user_filter_options.high && !this.user_filter_options.med && this.user_filter_options.low);
+	},
+	isLowAndMedSelected : function() {
+		return (!this.user_filter_options.high && this.user_filter_options.med && this.user_filter_options.low);
+	},
+	resetFilters : function() {
+		$("input:checkbox").removeAttr('checked');
+		this.user_filter_options.high = false;
+		this.user_filter_options.low = false;
+		this.user_filter_options.med = false;
+	}
+};
+
+SCHEDFOX.form = {
+	enableMaxPercentageForm : function(data, el) {
+//		console.log('data', data);
+//		console.log('el', el);
+		// update selection
+		if (data && data.employeeMetricsList) {
+			var $select = $(el).find('select.client-select-control');
+			$select.empty().append(
+					'<option value="">---Select an employee---</option>');
+			var employees = data.employeeMetricsList;
+			var locationId = data.locationId;
+
+			employees.forEach(function(obj, i) {
+				if ((obj.percentage * 100) > highColor) {
+					var o = $('<option/>', {
+						value : obj.employeeId
+					}).text(obj.employeeName).attr('data',
+							parseFloat(obj.percentage * 100.0).toFixed(2))
+							.attr('account', locationId);
+					// .prop('selected', i == 0);
+					o.appendTo($select);
+				}
+			});
+
+			// enable refresh button
+			$(el).find('button#new-max').removeClass('disabled');
+			
+		} else if (data) {
+
+			var $select = $(el).find('select.client-select-control');
+			$select.empty().append(
+					'<option value="">---Select an employee---</option>');
+
+			data.forEach(function(obj, i) {
+				if ((obj.percentage * 100) > highColor) {
+					var o = $('<option/>', {
+						value : obj.employeeId
+					}).text(obj.employeeName).attr('data',
+							parseFloat(obj.percentage * 100.0).toFixed(2))
+							.attr('account', obj.locationId);
+					// .prop('selected', i == 0);
+					o.appendTo($select);
+				}
+			});
+
+			// enable refresh button
+			$(el).find('button#new-max').removeClass('disabled');
+
+		}
+	},
+	submitMaxPercentageForm : function(el, callback) {
+		console.log('inside submission of form!');
+		el = $(el).parents('form:first');
+		var employeeId = $(el).find('select.client-select-control').val();
+		var new_max_percentage = $(el).find('input.new-max-percentage').val();
+		var account = $(el).find('select.client-select-control').find(':selected').attr('account');
+
+		console.log(account + " : " + new_max_percentage + ' :' + employeeId);
+
+		if (!account || +account === 0 || !employeeId || +employeeId === 0) {
+			// don't do anything
+			console.log('no value selected');
+			callback('no value selected');
+			return;
+		}
+		// ajax new percentage and on success call callback
+		var request = {};
+		request.employeeId = employeeId;
+		request.accountId = employeeId;
+		request.percentage = new_max_percentage;
+		request.type = 'employee';
+
+		$.ajax({
+			type : 'POST',
+			url : postPercentage,
+			data : JSON.stringify(request),
+			error : function(e) {
+				if (e && e.status === 200) {
+					callback(null, employeeId);
+				} else {
+					callback(e);
+				}
+			},
+			success : function(res) {
+				callback(null, employeeId);
+			},
+			dataType : "json",
+			contentType : "application/json; charset=utf-8"
+		});
+	},
+	onSelectChange : function(el) {
+		$(".new-max-percentage").slider("value", 10);
+	}
+};
+
+$(document)
+		.ready(
+				function() {
+
+					// set the slider
+					jQuery(".new-max-percentage").slider({
+						from : 0,
+						to : 100,
+						round : 1,
+						step : 1,
+						format : {
+							format : '##.0',
+							locale : 'us'
+						},
+						scale : [ 0, '|', 25, '|', '50', '|', 75, '|', 100, ],
+						dimension : '&nbsp;%',
+						skin : "round"
+					});
+
+					// set start-date and end-date to DOM
+					$('div span#to').html(toDate);
+					$('div span#from').html(startDate);
+
+					$('div.checkbox input').click(function(e) {
+
+						switch (this.value) {
+						case 'high':
+							// code block
+							SCHEDFOX.filters.filterRows(this);
+							break;
+						case 'med':
+							// code block
+							SCHEDFOX.filters.filterRows(this);
+							break;
+						case 'low':
+							// code block
+							SCHEDFOX.filters.filterRows(this);
+							break;
+
+						}
+
+					});
+
+					$('#showWhiteButton').click(function() {
+						var white = rows.filter('.white').show();
+						rows.not(white).hide();
+					});
+
+					$('#showAll').click(function() {
+						rows.show();
+					});
+
+					// tab content show dynamically
+					$("#profiAnalysisTab a").click(function(e) {
+						e.preventDefault();
+						$(this).tab('show');
+					});
+
+					$('button#new-max')
+							.click(
+									function(e) {
+										e.preventDefault();
+										showProgress();
+										SCHEDFOX.form
+												.submitMaxPercentageForm(
+														this,
+														function(err, rowId) {
+															if (err) {
+																console
+																		.log('Error occured while saving data!');
+																hideProgress();
+																return;
+															}
+															console
+																	.log('success!');
+															// refresh the
+															// account table
+															$('tr#' + rowId)
+																	.removeClass(
+																			'highRow');
+															$('tr#' + rowId)
+																	.addClass(
+																			'lowRow');
+															hideProgress();
+														});
+									})
+
+					$("select#client-select-control").change(function() {
+						var option = $('option:selected', this).attr('data');
+						$(".new-max-percentage").slider('value', option);
+					});
+				});

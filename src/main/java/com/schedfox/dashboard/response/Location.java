@@ -17,6 +17,10 @@ public class Location implements Serializable {
     private String locationName;
     private String branchId;
     private List<EmployeeMetrics> employeeMetricsList;
+    
+    private BigDecimal paidAmount;
+    private BigDecimal billAmount;
+    private BigDecimal percent;
 
     public Location() {
         employeeMetricsList = new ArrayList<EmployeeMetrics>();
@@ -47,41 +51,46 @@ public class Location implements Serializable {
     }
 
     public BigDecimal getPaidAmount() {
-        BigDecimal retVal = new BigDecimal(0);
+        paidAmount = new BigDecimal(0);
         try {
             for (int e = 0; e < this.employeeMetricsList.size(); e++) {
-                EmployeeMetrics currMetric = this.employeeMetricsList.get(e);
-                retVal = new BigDecimal(retVal.doubleValue() + currMetric.getPaidAmount().doubleValue());
+                try {
+                    EmployeeMetrics currMetric = this.employeeMetricsList.get(e);
+                    paidAmount = new BigDecimal(paidAmount.doubleValue() + currMetric.getPaidAmount().doubleValue());
+                } catch (Exception exe) {}
             }
         } catch (Exception exe) {
             exe.printStackTrace();
         } finally {
-            return retVal;
+            return paidAmount;
         }
     }
 
     public BigDecimal getBillAmount() {
-        BigDecimal retVal = new BigDecimal(0);
+        billAmount = new BigDecimal(0);
         try {
             if (employeeMetricsList != null) {
                 for (int e = 0; e < this.employeeMetricsList.size(); e++) {
-                    EmployeeMetrics currMetric = this.employeeMetricsList.get(e);
-                    retVal = new BigDecimal(retVal.doubleValue() + currMetric.getBillAmount().doubleValue());
+                    try {
+                        EmployeeMetrics currMetric = this.employeeMetricsList.get(e);
+                        billAmount = new BigDecimal(billAmount.doubleValue() + currMetric.getBillAmount().doubleValue());
+                    } catch (Exception exe) {}
                 }
             }
         } catch (Exception exe) {
             exe.printStackTrace();
         } finally {
-            return retVal;
+            return billAmount;
         }
     }
 
     public BigDecimal getPercentage() {
         try {
-            return new BigDecimal(this.getPaidAmount().doubleValue() / this.getBillAmount().doubleValue());
+            percent = new BigDecimal(this.getPaidAmount().doubleValue() / this.getBillAmount().doubleValue());
         } catch (Exception exe) {
-            return new BigDecimal(0);
+            percent = new BigDecimal(0);
         }
+        return percent;
     }
 
     @Override

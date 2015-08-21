@@ -299,8 +299,44 @@ header{
 }
 
 
+div#spinner {
+	display: none;
+	width: 100px;
+	height: 100px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	background:
+		url(../img/loader.GIF)
+		no-repeat center #fff;
+	text-align: center;
+	padding: 10px;
+	font: normal 16px Tahoma, Geneva, sans-serif;
+	/* border: 1px solid #666; */
+	margin-left: -50px;
+	margin-top: -50px;
+	z-index: 2;
+	overflow: auto;
+}
+h2,h3{
+	color: #3498db
+}
 
 
+.layout {
+	padding: 50px;
+	font-family: Georgia, serif;
+}
+
+.layout-slider {
+	margin-bottom: 60px;
+	width: 50%;
+	margin-top: 15px;
+}
+
+div.form-group select.client-select-control {
+	width: 50%;
+}
 
 
 
